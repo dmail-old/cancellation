@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "sources": [
+    "test/cancel-before-start-server.js"
+  ],
+  "names": [
+    "token",
+    "cancellationToken",
+    "cancel",
+    "exec",
+    "then",
+    "values",
+    "assert",
+    "deepEqual",
+    "serverPromise",
+    "responsePromise",
+    "fail",
+    "console",
+    "log"
+  ],
+  "mappings": ";;AAAA;;AACA;;AACA;;;;AAEA;AACE,QAAM;AAAEA,IAAAA,KAAK,EAAEC,iBAAT;AAA4BC,IAAAA;AAA5B,MAAuC,sCAA7C;;AACA,QAAMC,IAAI,GAAG,YAAY;AACvBD,IAAAA,MAAM,CAAC,QAAD,CAAN,CAAiBE,IAAjB,CAAuBC,MAAD,IAAY;AAChCC,sBAAOC,SAAP,CAAiBF,MAAjB,EAAyB,EAAzB;AACD,KAFD;AAGA,UAAMG,aAAa,GAAG,2BAAY;AAAEP,MAAAA;AAAF,KAAZ,CAAtB;AACA,UAAMO,aAAN;AACA,UAAMC,eAAe,GAAG,6BAAc;AAAER,MAAAA;AAAF,KAAd,CAAxB;AACA,WAAOQ,eAAP;AACD,GARD;;AASAN,EAAAA,IAAI,GAAGC,IAAP,CAAY,MAAM;AAChBE,oBAAOI,IAAP,CAAY,oBAAZ;;AACAC,IAAAA,OAAO,CAACC,GAAR,CAAY,QAAZ;AACD,GAHD;AAID",
+  "sourcesContent": [
+    "import { createCancellationSource } from \"../index.js\"\nimport { startServer, requestServer } from \"./fixtures.js\"\nimport assert from \"assert\"\n\n{\n  const { token: cancellationToken, cancel } = createCancellationSource()\n  const exec = async () => {\n    cancel(\"cancel\").then((values) => {\n      assert.deepEqual(values, [])\n    })\n    const serverPromise = startServer({ cancellationToken })\n    await serverPromise\n    const responsePromise = requestServer({ cancellationToken })\n    return responsePromise\n  }\n  exec().then(() => {\n    assert.fail(\"must not be called\")\n    console.log(\"passed\")\n  })\n}\n"
+  ]
+}

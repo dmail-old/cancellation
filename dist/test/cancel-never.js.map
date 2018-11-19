@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "sources": [
+    "test/cancel-never.js"
+  ],
+  "names": [
+    "exec",
+    "serverPromise",
+    "responsePromise",
+    "then",
+    "statusCode",
+    "assert",
+    "equal",
+    "console",
+    "log"
+  ],
+  "mappings": ";;AAAA;;AACA;;;;AAEA;AACE,QAAMA,IAAI,GAAG,YAAY;AACvB,UAAMC,aAAa,GAAG,4BAAtB;AACA,UAAMA,aAAN;AACA,UAAMC,eAAe,GAAG,8BAAxB;AACA,WAAOA,eAAP;AACD,GALD;;AAMAF,EAAAA,IAAI,GAAGG,IAAP,CAAY,CAAC;AAAEC,IAAAA;AAAF,GAAD,KAAoB;AAC9BC,oBAAOC,KAAP,CAAaF,UAAb,EAAyB,GAAzB;;AACAG,IAAAA,OAAO,CAACC,GAAR,CAAY,QAAZ;AACD,GAHD;AAID",
+  "sourcesContent": [
+    "import { startServer, requestServer } from \"./fixtures.js\"\nimport assert from \"assert\"\n\n{\n  const exec = async () => {\n    const serverPromise = startServer()\n    await serverPromise\n    const responsePromise = requestServer()\n    return responsePromise\n  }\n  exec().then(({ statusCode }) => {\n    assert.equal(statusCode, 200)\n    console.log(\"passed\")\n  })\n}\n"
+  ]
+}

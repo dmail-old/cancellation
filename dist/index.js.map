@@ -1,0 +1,11 @@
+{
+  "version": 3,
+  "sources": [
+    "index.js"
+  ],
+  "names": [],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA",
+  "sourcesContent": [
+    "export {\n  createCancellationToken,\n  createCancellationSource,\n  cancellationTokenCompose,\n  cancellationTokenToPromise,\n  cancellationTokenWrapPromise,\n} from \"./src/cancellation.js\"\n"
+  ]
+}

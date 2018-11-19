@@ -1,0 +1,26 @@
+{
+  "version": 3,
+  "sources": [
+    "test/cancel-after-response.js"
+  ],
+  "names": [
+    "token",
+    "cancellationToken",
+    "cancel",
+    "exec",
+    "serverPromise",
+    "responsePromise",
+    "then",
+    "statusCode",
+    "assert",
+    "equal",
+    "values",
+    "deepEqual",
+    "console",
+    "log"
+  ],
+  "mappings": ";;AAAA;;AACA;;AACA;;;;AAEA;AACE,QAAM;AAAEA,IAAAA,KAAK,EAAEC,iBAAT;AAA4BC,IAAAA;AAA5B,MAAuC,sCAA7C;;AAEA,QAAMC,IAAI,GAAG,YAAY;AACvB,UAAMC,aAAa,GAAG,2BAAY;AAAEH,MAAAA;AAAF,KAAZ,CAAtB;AACA,UAAMG,aAAN;AACA,UAAMC,eAAe,GAAG,6BAAc;AAAEJ,MAAAA;AAAF,KAAd,CAAxB;AACA,WAAO,MAAMI,eAAb;AACD,GALD;;AAMAF,EAAAA,IAAI,GAAGG,IAAP,CAAY,CAAC;AAAEC,IAAAA;AAAF,GAAD,KAAoB;AAC9BC,oBAAOC,KAAP,CAAaF,UAAb,EAAyB,GAAzB;;AACAL,IAAAA,MAAM,CAAC,QAAD,CAAN,CAAiBI,IAAjB,CAAuBI,MAAD,IAAY;AAChCF,sBAAOG,SAAP,CAAiBD,MAAjB,EAAyB,CAAC,8BAAD,CAAzB;;AACAE,MAAAA,OAAO,CAACC,GAAR,CAAY,QAAZ;AACD,KAHD;AAID,GAND;AAOD",
+  "sourcesContent": [
+    "import { createCancellationSource } from \"../index.js\"\nimport { startServer, requestServer } from \"./fixtures.js\"\nimport assert from \"assert\"\n\n{\n  const { token: cancellationToken, cancel } = createCancellationSource()\n\n  const exec = async () => {\n    const serverPromise = startServer({ cancellationToken })\n    await serverPromise\n    const responsePromise = requestServer({ cancellationToken })\n    return await responsePromise\n  }\n  exec().then(({ statusCode }) => {\n    assert.equal(statusCode, 200)\n    cancel(\"cancel\").then((values) => {\n      assert.deepEqual(values, [\"server closed because cancel\"])\n      console.log(\"passed\")\n    })\n  })\n}\n"
+  ]
+}

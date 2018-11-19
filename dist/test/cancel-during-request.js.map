@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "sources": [
+    "test/cancel-during-request.js"
+  ],
+  "names": [
+    "token",
+    "cancellationToken",
+    "cancel",
+    "exec",
+    "serverPromise",
+    "responsePromise",
+    "Promise",
+    "resolve",
+    "setTimeout",
+    "then",
+    "values",
+    "assert",
+    "deepEqual",
+    "console",
+    "log",
+    "fail"
+  ],
+  "mappings": ";;AAAA;;AACA;;AACA;;;;AAEA;AACE,QAAM;AAAEA,IAAAA,KAAK,EAAEC,iBAAT;AAA4BC,IAAAA;AAA5B,MAAuC,sCAA7C;;AAEA,QAAMC,IAAI,GAAG,YAAY;AACvB,UAAMC,aAAa,GAAG,2BAAY;AAAEH,MAAAA;AAAF,KAAZ,CAAtB;AACA,UAAMG,aAAN;AACA,UAAMC,eAAe,GAAG,6BAAc;AAAEJ,MAAAA;AAAF,KAAd,CAAxB;AACA,UAAM,IAAIK,OAAJ,CAAaC,OAAD,IAAaC,UAAU,CAACD,OAAD,CAAnC,CAAN;AACAL,IAAAA,MAAM,CAAC,QAAD,CAAN,CAAiBO,IAAjB,CAAuBC,MAAD,IAAY;AAChCC,sBAAOC,SAAP,CAAiBF,MAAjB,EAAyB,CAAC,gCAAD,EAAmC,8BAAnC,CAAzB;;AACAG,MAAAA,OAAO,CAACC,GAAR,CAAY,QAAZ;AACD,KAHD;AAIA,UAAMT,eAAN;AACD,GAVD;;AAWAF,EAAAA,IAAI,GAAGM,IAAP,CAAY,MAAM;AAChBE,oBAAOI,IAAP,CAAY,oBAAZ;AACD,GAFD;AAGD",
+  "sourcesContent": [
+    "import { createCancellationSource } from \"../index.js\"\nimport { startServer, requestServer } from \"./fixtures.js\"\nimport assert from \"assert\"\n\n{\n  const { token: cancellationToken, cancel } = createCancellationSource()\n\n  const exec = async () => {\n    const serverPromise = startServer({ cancellationToken })\n    await serverPromise\n    const responsePromise = requestServer({ cancellationToken })\n    await new Promise((resolve) => setTimeout(resolve))\n    cancel(\"cancel\").then((values) => {\n      assert.deepEqual(values, [\"request aborted because cancel\", \"server closed because cancel\"])\n      console.log(\"passed\")\n    })\n    await responsePromise\n  }\n  exec().then(() => {\n    assert.fail(\"must not be called\")\n  })\n}\n"
+  ]
+}

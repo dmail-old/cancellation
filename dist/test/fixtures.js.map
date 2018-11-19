@@ -1,0 +1,43 @@
+{
+  "version": 3,
+  "sources": [
+    "test/fixtures.js"
+  ],
+  "names": [
+    "startServer",
+    "cancellationToken",
+    "server",
+    "http",
+    "createServer",
+    "opened",
+    "Promise",
+    "resolve",
+    "reject",
+    "on",
+    "listen",
+    "close",
+    "reason",
+    "once",
+    "error",
+    "register",
+    "process",
+    "request",
+    "response",
+    "writeHead",
+    "end",
+    "requestServer",
+    "port",
+    "hostname",
+    "aborting",
+    "responded",
+    "code",
+    "message",
+    "unregisterAbortCancellation",
+    "abort",
+    "then"
+  ],
+  "mappings": "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",
+  "sourcesContent": [
+    "import http from \"http\"\nimport {\n  createCancellationToken,\n  cancellationTokenToPromise,\n  cancellationTokenWrapPromise,\n} from \"../index.js\"\n\nexport const startServer = async ({ cancellationToken = createCancellationToken() } = {}) => {\n  await cancellationTokenToPromise(cancellationToken)\n\n  const server = http.createServer()\n\n  const opened = cancellationTokenWrapPromise(\n    cancellationToken,\n    new Promise((resolve, reject) => {\n      server.on(\"error\", reject)\n      server.on(\"listening\", resolve)\n      server.listen(3000, \"127.0.0.1\")\n    }),\n  )\n\n  const close = async (reason) => {\n    // we must wait for the server to be opened before being able to close it\n    await opened\n    return new Promise((resolve, reject) => {\n      server.once(\"close\", (error) => {\n        if (error) {\n          reject(error)\n        } else {\n          resolve(`server closed because ${reason}`)\n        }\n      })\n      server.close()\n    })\n  }\n\n  cancellationToken.register(close)\n  process.on(\"exit\", close)\n\n  await opened\n  server.on(\"request\", (request, response) => {\n    response.writeHead(200)\n    response.end()\n  })\n}\n\nexport const requestServer = async ({ cancellationToken = createCancellationToken() } = {}) => {\n  await cancellationTokenToPromise(cancellationToken)\n\n  const request = http.request({\n    port: 3000,\n    hostname: \"127.0.0.1\",\n  })\n\n  let aborting = false\n  const responded = cancellationTokenWrapPromise(\n    cancellationToken,\n    new Promise((resolve, reject) => {\n      request.on(\"response\", resolve)\n      request.on(\"error\", (error) => {\n        // abort will trigger a ECONNRESET error\n        if (\n          aborting &&\n          error &&\n          error.code === \"ECONNRESET\" &&\n          error.message === \"socket hang up\"\n        ) {\n          return\n        }\n        reject(error)\n      })\n    }),\n  )\n\n  request.end()\n  const unregisterAbortCancellation = cancellationToken.register((reason) => {\n    aborting = true\n    return new Promise((resolve) => {\n      request.on(\"abort\", () => {\n        resolve(`request aborted because ${reason}`)\n      })\n      request.abort()\n    })\n  })\n  responded.then(() => unregisterAbortCancellation())\n\n  return responded\n}\n"
+  ]
+}
