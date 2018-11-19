@@ -1,4 +1,4 @@
-import { createCancellationSource } from "../../cancellation/index.js"
+import { createCancellationSource } from "../index.js"
 import { startServer, requestServer } from "./fixtures.js"
 import assert from "assert"
 
