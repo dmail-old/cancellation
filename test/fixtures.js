@@ -1,12 +1,12 @@
 import http from "http"
-import { createCancellationToken, trackOperation } from "../index.js"
+import { createCancellationToken, createOperation } from "../index.js"
 
 export const startServer = async ({ cancellationToken = createCancellationToken() } = {}) => {
   cancellationToken.throwIfRequested()
 
   const server = http.createServer()
 
-  const opened = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     server.on("error", reject)
     server.on("listening", () => {
       resolve(server.address().port)
@@ -14,8 +14,8 @@ export const startServer = async ({ cancellationToken = createCancellationToken(
     server.listen(0, "127.0.0.1")
   })
 
-  const close = async (reason) => {
-    return new Promise((resolve, reject) => {
+  const stop = (reason) =>
+    new Promise((resolve, reject) => {
       server.once("close", (error) => {
         if (error) {
           reject(error)
@@ -25,11 +25,13 @@ export const startServer = async ({ cancellationToken = createCancellationToken(
       })
       server.close()
     })
-  }
 
-  process.on("exit", close)
+  const operation = createOperation({ cancellationToken, promise, stop })
 
-  const port = await trackOperation(cancellationToken, opened, { stop: close })
+  process.on("exit", operation.cancel)
+
+  const port = await operation
+
   server.on("request", (request, response) => {
     response.writeHead(200)
     response.end()
@@ -47,29 +49,29 @@ export const requestServer = async ({ cancellationToken = createCancellationToke
   })
 
   let aborting = false
-  const responded = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     request.on("response", resolve)
     request.on("error", (error) => {
-      // abort will trigger a ECONNRESET error
+      // abort may trigger a ECONNRESET error
       if (aborting && error && error.code === "ECONNRESET" && error.message === "socket hang up") {
         return
       }
-      console.log("yep", cancellationToken.cancellationRequested)
       reject(error)
     })
   })
 
-  const abort = (reason) => {
-    aborting = true
-    return new Promise((resolve) => {
+  const abort = (reason) =>
+    new Promise((resolve) => {
+      aborting = true
       request.on("abort", () => {
         resolve(`request aborted because ${reason}`)
       })
       request.abort()
     })
-  }
+
+  const operation = createOperation({ cancellationToken, promise, abort })
 
   request.end()
 
-  return trackOperation(cancellationToken, responded, { abort })
+  return operation
 }
