@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.trackOperation = exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
+exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
 
 var _arrayHelper = require("./arrayHelper.js");
 
@@ -27,7 +27,7 @@ const createCancellationSource = () => {
   let requested = false;
   let cancelReason;
   let cancelPromise;
-  let callbacks = [];
+  let registrationArray = [];
 
   const cancel = reason => {
     if (requested) {
@@ -37,33 +37,40 @@ const createCancellationSource = () => {
     requested = true;
     cancelReason = reason;
     const values = [];
-    cancelPromise = callbacks.reduce(async (previous, callback) => {
+    cancelPromise = registrationArray.reduce(async (previous, registration) => {
       await previous;
-      const returnValue = callback(reason);
+      const returnValue = registration.callback(reason);
       const value = await returnValue;
-      const removedBeforeResolved = callbacks.indexOf(callback) === -1; // if the callback is removed it means
+      const removedBeforeResolved = registrationArray.indexOf(registration) === -1; // if the callback is removed it means
       // what it does is not important
 
       if (removedBeforeResolved === false) {
         values.push(value);
       }
     }, Promise.resolve()).then(() => {
-      callbacks.length = 0;
+      registrationArray.length = 0;
       return values;
     });
     return cancelPromise;
   };
 
   const register = callback => {
-    const index = callbacks.indexOf(callback); // don't register twice
+    const existingRegistration = registrationArray.find(registration => {
+      return registration.callback === callback;
+    }); // don't register twice
 
-    if (index === -1) {
-      callbacks = [callback, ...callbacks];
+    if (existingRegistration) {
+      return existingRegistration;
     }
 
-    return () => {
-      callbacks = (0, _arrayHelper.arrayWithout)(callbacks, callback);
+    const registration = {
+      callback,
+      unregister: () => {
+        registrationArray = (0, _arrayHelper.arrayWithout)(registrationArray, registration);
+      }
     };
+    registrationArray = [registration, ...registrationArray];
+    return registration;
   };
 
   const throwIfRequested = () => {
@@ -94,13 +101,12 @@ const cancellationTokenCompose = (...tokens) => {
 
   const visit = i => {
     const token = tokens[i];
-    const unregister = token.register(reason => {
+    const registration = token.register(reason => {
       if (requested) return;
       requested = true;
-      unregister();
+      registration.unregister();
       cancelReason = reason;
     });
-    if (requested) unregister();
   };
 
   let i = 0;
@@ -114,8 +120,8 @@ const cancellationTokenCompose = (...tokens) => {
   }
 
   const register = callback => {
-    const unregisters = tokens.map(token => token.register(callback));
-    return () => unregisters.forEach(unregister => unregister());
+    const registrationArray = tokens.map(token => token.register(callback));
+    return () => registrationArray.forEach(registration => registration.unregister());
   };
 
   const throwIfRequested = () => {
@@ -138,7 +144,12 @@ const cancellationTokenCompose = (...tokens) => {
 exports.cancellationTokenCompose = cancellationTokenCompose;
 
 const createCancellationToken = () => {
-  const register = () => () => {};
+  const register = callback => {
+    return {
+      callback,
+      unregister: () => {}
+    };
+  };
 
   const throwIfRequested = () => undefined;
 
@@ -150,34 +161,4 @@ const createCancellationToken = () => {
 };
 
 exports.createCancellationToken = createCancellationToken;
-
-const trackOperation = (cancellationToken, promise, {
-  abort,
-  stop
-} = {}) => {
-  const cancelPromise = new Promise((resolve, reject) => {
-    const unregisterRejectOnCancel = cancellationToken.register(reason => {
-      // unregister immediatly so it won't appear in cancel() values
-      unregisterRejectOnCancel();
-      reject(createCancelError(reason));
-    });
-    promise.then(unregisterRejectOnCancel, reject);
-
-    if (abort) {
-      const unregisterAbortOnCancel = cancellationToken.register(reason => {
-        return abort(reason);
-      });
-      promise.then(unregisterAbortOnCancel, reject);
-    }
-
-    if (stop) {
-      cancellationToken.register(reason => {
-        return promise.then(() => stop(reason));
-      });
-    }
-  });
-  return Promise.race([promise, cancelPromise]);
-};
-
-exports.trackOperation = trackOperation;
 //# sourceMappingURL=cancellation.js.map

@@ -18,7 +18,7 @@ const startServer = async ({
 
   const server = _http.default.createServer();
 
-  const opened = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     server.on("error", reject);
     server.on("listening", () => {
       resolve(server.address().port);
@@ -26,23 +26,24 @@ const startServer = async ({
     server.listen(0, "127.0.0.1");
   });
 
-  const close = async reason => {
-    return new Promise((resolve, reject) => {
-      server.once("close", error => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(`server closed because ${reason}`);
-        }
-      });
-      server.close();
+  const stop = reason => new Promise((resolve, reject) => {
+    server.once("close", error => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(`server closed because ${reason}`);
+      }
     });
-  };
-
-  process.on("exit", close);
-  const port = await (0, _index.trackOperation)(cancellationToken, opened, {
-    stop: close
+    server.close();
   });
+
+  const operation = (0, _index.createOperation)({
+    cancellationToken,
+    promise,
+    stop
+  });
+  process.on("exit", operation.cancel);
+  const port = await operation;
   server.on("request", (request, response) => {
     response.writeHead(200);
     response.end();
@@ -64,33 +65,33 @@ const requestServer = async ({
   });
 
   let aborting = false;
-  const responded = new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     request.on("response", resolve);
     request.on("error", error => {
-      // abort will trigger a ECONNRESET error
+      // abort may trigger a ECONNRESET error
       if (aborting && error && error.code === "ECONNRESET" && error.message === "socket hang up") {
         return;
       }
 
-      console.log("yep", cancellationToken.cancellationRequested);
       reject(error);
     });
   });
 
-  const abort = reason => {
+  const abort = reason => new Promise(resolve => {
     aborting = true;
-    return new Promise(resolve => {
-      request.on("abort", () => {
-        resolve(`request aborted because ${reason}`);
-      });
-      request.abort();
+    request.on("abort", () => {
+      resolve(`request aborted because ${reason}`);
     });
-  };
+    request.abort();
+  });
 
-  request.end();
-  return (0, _index.trackOperation)(cancellationToken, responded, {
+  const operation = (0, _index.createOperation)({
+    cancellationToken,
+    promise,
     abort
   });
+  request.end();
+  return operation;
 };
 
 exports.requestServer = requestServer;

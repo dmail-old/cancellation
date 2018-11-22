@@ -33,12 +33,14 @@ Object.defineProperty(exports, "cancellationTokenCompose", {
     return _cancellation.cancellationTokenCompose;
   }
 });
-Object.defineProperty(exports, "trackOperation", {
+Object.defineProperty(exports, "createOperation", {
   enumerable: true,
   get: function () {
-    return _cancellation.trackOperation;
+    return _operation.createOperation;
   }
 });
 
 var _cancellation = require("./src/cancellation.js");
+
+var _operation = require("./src/operation.js");
 //# sourceMappingURL=index.js.map

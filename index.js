@@ -4,5 +4,6 @@ export {
   createCancellationToken,
   createCancellationSource,
   cancellationTokenCompose,
-  trackOperation,
 } from "./src/cancellation.js"
+
+export { createOperation } from "./src/operation.js"
