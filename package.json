@@ -32,17 +32,19 @@
 		"rimraf": "2.6.2"
 	},
 	"scripts": {
+		"repo-reset": "npm run code-clean && npm run test-cover-clean && rimraf node_modules",
+		"repo-reinstall": "npm run repo-reset && npm install",
+		"reinstall": "npm run repo-reinstall",
 		"code-compile": "node ./script/compile.js",
 		"code-clean": "rimraf dist",
 		"code-build": "npm run code-clean && npm run code-compile",
 		"code-lint": "eslint .",
 		"code-format": "prettiest",
-		"repo-reset": "npm run code-clean && npm run test-cover-clean && rimraf node_modules",
-		"repo-reinstall": "npm run repo-reset && npm install",
 		"build": "npm run code-build",
 		"compile": "npm run code-compile",
-		"test": "node ./script/test.js",
-		"prepublishOnly": "npm run code-build",
-		"reinstall": "npm run repo-reinstall"
+		"test-before": "npm run code-clean && npm run code-lint && npm run code-format && npm run code-compile",
+		"test-run": "node ./script/test.js",
+		"test": "npm run test-before && npm run test-run",
+		"prepublishOnly": "npm run code-build"
 	}
 }

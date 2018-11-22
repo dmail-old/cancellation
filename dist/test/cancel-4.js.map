@@ -1,0 +1,26 @@
+{
+  "version": 3,
+  "sources": [
+    "/test/cancel-4.js"
+  ],
+  "names": [
+    "test",
+    "token",
+    "cancellationToken",
+    "cancel",
+    "portPromise",
+    "port",
+    "responsePromise",
+    "response",
+    "then",
+    "values",
+    "assert",
+    "deepEqual",
+    "console",
+    "log",
+    "statusCode",
+    "error",
+    "fail"
+  ],
+  "mappings": ";;AAAA;;AACA;;AACA;;;;AAEA,MAAMA,IAAI,GAAG,YAAY;AACvB;AACE,UAAM;AAAEC,MAAAA,KAAK,EAAEC,iBAAT;AAA4BC,MAAAA;AAA5B,QAAuC,sCAA7C;;AAEA,QAAI;AACF,YAAMC,WAAW,GAAG,2BAAY;AAAEF,QAAAA;AAAF,OAAZ,CAApB;AACA,YAAMG,IAAI,GAAG,MAAMD,WAAnB;AACA,YAAME,eAAe,GAAG,6BAAc;AAAEJ,QAAAA,iBAAF;AAAqBG,QAAAA;AAArB,OAAd,CAAxB;AACA,YAAME,QAAQ,GAAG,MAAMD,eAAvB;AAEAH,MAAAA,MAAM,CAAC,QAAD,CAAN,CAAiBK,IAAjB,CAAuBC,MAAD,IAAY;AAChCC,wBAAOC,SAAP,CAAiBF,MAAjB,EAAyB,CAAC,8BAAD,CAAzB;;AACAG,QAAAA,OAAO,CAACC,GAAR,CAAY,QAAZ;AACD,OAHD;;AAKAH,sBAAOC,SAAP,CAAiBJ,QAAQ,CAACO,UAA1B,EAAsC,GAAtC;AACD,KAZD,CAYE,OAAOC,KAAP,EAAc;AACdL,sBAAOM,IAAP,CAAY,mBAAZ;AACD;AACF;AACF,CApBD;;AAqBAhB,IAAI"
+}

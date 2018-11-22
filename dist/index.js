@@ -3,6 +3,18 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+Object.defineProperty(exports, "createCancelError", {
+  enumerable: true,
+  get: function () {
+    return _cancellation.createCancelError;
+  }
+});
+Object.defineProperty(exports, "isCancelError", {
+  enumerable: true,
+  get: function () {
+    return _cancellation.isCancelError;
+  }
+});
 Object.defineProperty(exports, "createCancellationToken", {
   enumerable: true,
   get: function () {
@@ -21,16 +33,10 @@ Object.defineProperty(exports, "cancellationTokenCompose", {
     return _cancellation.cancellationTokenCompose;
   }
 });
-Object.defineProperty(exports, "toRejectedIfRequested", {
+Object.defineProperty(exports, "trackOperation", {
   enumerable: true,
   get: function () {
-    return _cancellation.toRejectedIfRequested;
-  }
-});
-Object.defineProperty(exports, "toPendingIfRequested", {
-  enumerable: true,
-  get: function () {
-    return _cancellation.toPendingIfRequested;
+    return _cancellation.trackOperation;
   }
 });
 

@@ -14,19 +14,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const startServer = async ({
   cancellationToken = (0, _index.createCancellationToken)()
 } = {}) => {
-  await (0, _index.toPendingIfRequested)(cancellationToken);
+  cancellationToken.throwIfRequested();
 
   const server = _http.default.createServer();
 
-  const opened = (0, _index.toPendingIfRequested)(cancellationToken, new Promise((resolve, reject) => {
+  const opened = new Promise((resolve, reject) => {
     server.on("error", reject);
-    server.on("listening", resolve);
-    server.listen(3000, "127.0.0.1");
-  }));
+    server.on("listening", () => {
+      resolve(server.address().port);
+    });
+    server.listen(0, "127.0.0.1");
+  });
 
   const close = async reason => {
-    // we must wait for the server to be opened before being able to close it
-    await opened;
     return new Promise((resolve, reject) => {
       server.once("close", error => {
         if (error) {
@@ -39,29 +39,32 @@ const startServer = async ({
     });
   };
 
-  cancellationToken.register(close);
   process.on("exit", close);
-  await opened;
+  const port = await (0, _index.trackOperation)(cancellationToken, opened, {
+    stop: close
+  });
   server.on("request", (request, response) => {
     response.writeHead(200);
     response.end();
   });
+  return port;
 };
 
 exports.startServer = startServer;
 
 const requestServer = async ({
-  cancellationToken = (0, _index.createCancellationToken)()
-} = {}) => {
-  await (0, _index.toPendingIfRequested)(cancellationToken);
+  cancellationToken = (0, _index.createCancellationToken)(),
+  port
+}) => {
+  cancellationToken.throwIfRequested();
 
   const request = _http.default.request({
-    port: 3000,
+    port,
     hostname: "127.0.0.1"
   });
 
   let aborting = false;
-  const responded = (0, _index.toPendingIfRequested)(cancellationToken, new Promise((resolve, reject) => {
+  const responded = new Promise((resolve, reject) => {
     request.on("response", resolve);
     request.on("error", error => {
       // abort will trigger a ECONNRESET error
@@ -69,11 +72,12 @@ const requestServer = async ({
         return;
       }
 
+      console.log("yep", cancellationToken.cancellationRequested);
       reject(error);
     });
-  }));
-  request.end();
-  const unregisterAbortCancellation = cancellationToken.register(reason => {
+  });
+
+  const abort = reason => {
     aborting = true;
     return new Promise(resolve => {
       request.on("abort", () => {
@@ -81,9 +85,12 @@ const requestServer = async ({
       });
       request.abort();
     });
+  };
+
+  request.end();
+  return (0, _index.trackOperation)(cancellationToken, responded, {
+    abort
   });
-  responded.then(() => unregisterAbortCancellation());
-  return responded;
 };
 
 exports.requestServer = requestServer;

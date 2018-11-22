@@ -3,104 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.toPendingIfRequested = exports.toRejectedIfRequested = exports.createCancelError = exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = void 0;
+exports.trackOperation = exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
 
 var _arrayHelper = require("./arrayHelper.js");
 
 // https://github.com/tc39/proposal-cancellation/tree/master/stage0
-const createCancellationSource = () => {
-  let canceled = false;
-  let callbacks = [];
-  let requestedResolve;
-  let cancelPromise;
-  const requestedPromise = new Promise(resolve => {
-    requestedResolve = resolve;
-  });
-
-  const toRequestedPromise = () => requestedPromise;
-
-  const cancel = reason => {
-    if (canceled) {
-      return cancelPromise;
-    }
-
-    canceled = true;
-    requestedResolve(reason);
-    const values = [];
-    cancelPromise = callbacks.reduce((previous, callback, index) => {
-      return previous.then(() => callback(reason)).then(value => {
-        values[index] = value;
-      });
-    }, Promise.resolve()).then(() => values);
-    return cancelPromise;
-  };
-
-  const register = callback => {
-    const index = callbacks.indexOf(callback);
-
-    if (index > -1) {
-      return () => {
-        callbacks = (0, _arrayHelper.arrayWithout)(callbacks, callback);
-      };
-    }
-
-    callbacks = [callback, ...callbacks];
-    return () => {
-      callbacks = (0, _arrayHelper.arrayWithout)(callbacks, callback);
-    };
-  };
-
-  return {
-    token: {
-      toRequestedPromise,
-      register
-    },
-    cancel
-  };
-};
-
-exports.createCancellationSource = createCancellationSource;
-
-const cancellationTokenCompose = (...tokens) => {
-  const register = callback => {
-    const unregisters = tokens.map(token => token.register(callback));
-    return () => unregisters.forEach(unregister => unregister());
-  };
-
-  const toRequestedPromise = () => {
-    return Promise.race([tokens.map(token => token.toRequestedPromise())]);
-  };
-
-  return {
-    toRequestedPromise,
-    register
-  };
-};
-
-exports.cancellationTokenCompose = cancellationTokenCompose;
-
-const createCancellationToken = () => {
-  return {
-    toRequestedPromise: () => new Promise(() => {}),
-    register: () => () => {}
-  };
-};
-
-exports.createCancellationToken = createCancellationToken;
-const pendingFlag = {};
-
-const cancellationTokenToPromiseIfRequested = ({
-  toRequestedPromise
-}, promises, requestedToPromise) => {
-  if (promises.length === 0) {
-    return Promise.race([toRequestedPromise(), pendingFlag]).then(value => {
-      return value === pendingFlag ? undefined : requestedToPromise(value);
-    });
-  }
-
-  return Promise.race([...promises, toRequestedPromise().then(requestedToPromise)]);
-};
-
 const createCancelError = reason => {
   const cancelError = new Error(`canceled because ${reason}`);
   cancelError.name = "CANCEL_ERROR";
@@ -110,25 +17,167 @@ const createCancelError = reason => {
 
 exports.createCancelError = createCancelError;
 
-const toRejectedPromise = reason => Promise.reject(createCancelError(reason));
+const isCancelError = value => {
+  return value && typeof value === "object" && value.name === "CANCEL_ERROR";
+};
 
-const toRejectedIfRequested = (cancellationToken, ...promises) => {
-  return cancellationTokenToPromiseIfRequested(cancellationToken, promises, toRejectedPromise);
-}; // It may lead to memory leak but it has to be tested
+exports.isCancelError = isCancelError;
 
+const createCancellationSource = () => {
+  let requested = false;
+  let cancelReason;
+  let cancelPromise;
+  let callbacks = [];
 
-exports.toRejectedIfRequested = toRejectedIfRequested;
+  const cancel = reason => {
+    if (requested) {
+      return cancelPromise;
+    }
 
-const toPendingPromise = () => new Promise(() => {});
+    requested = true;
+    cancelReason = reason;
+    const values = [];
+    cancelPromise = callbacks.reduce(async (previous, callback) => {
+      await previous;
+      const returnValue = callback(reason);
+      const value = await returnValue;
+      const removedBeforeResolved = callbacks.indexOf(callback) === -1; // if the callback is removed it means
+      // what it does is not important
 
-const toPendingIfRequested = (cancellationToken, ...promises) => {
-  return cancellationTokenToPromiseIfRequested(cancellationToken, promises, toPendingPromise);
-}; // export const cancelllationTokenCanceled = {
-//   register: () => () => {},
-//   isRequested: () => true,
-//   toPromise: () => cancellationToPromise(),
-// }
+      if (removedBeforeResolved === false) {
+        values.push(value);
+      }
+    }, Promise.resolve()).then(() => {
+      callbacks.length = 0;
+      return values;
+    });
+    return cancelPromise;
+  };
 
+  const register = callback => {
+    const index = callbacks.indexOf(callback); // don't register twice
 
-exports.toPendingIfRequested = toPendingIfRequested;
+    if (index === -1) {
+      callbacks = [callback, ...callbacks];
+    }
+
+    return () => {
+      callbacks = (0, _arrayHelper.arrayWithout)(callbacks, callback);
+    };
+  };
+
+  const throwIfRequested = () => {
+    if (requested) {
+      throw createCancelError(cancelReason);
+    }
+  };
+
+  return {
+    token: {
+      register,
+
+      get cancellationRequested() {
+        return requested;
+      },
+
+      throwIfRequested
+    },
+    cancel
+  };
+};
+
+exports.createCancellationSource = createCancellationSource;
+
+const cancellationTokenCompose = (...tokens) => {
+  let requested = false;
+  let cancelReason;
+
+  const visit = i => {
+    const token = tokens[i];
+    const unregister = token.register(reason => {
+      if (requested) return;
+      requested = true;
+      unregister();
+      cancelReason = reason;
+    });
+    if (requested) unregister();
+  };
+
+  let i = 0;
+
+  while (i < tokens.length) {
+    visit(i++);
+
+    if (requested) {
+      break;
+    }
+  }
+
+  const register = callback => {
+    const unregisters = tokens.map(token => token.register(callback));
+    return () => unregisters.forEach(unregister => unregister());
+  };
+
+  const throwIfRequested = () => {
+    if (requested) {
+      throw createCancelError(cancelReason);
+    }
+  };
+
+  return {
+    register,
+
+    get cancellationRequested() {
+      return requested;
+    },
+
+    throwIfRequested
+  };
+};
+
+exports.cancellationTokenCompose = cancellationTokenCompose;
+
+const createCancellationToken = () => {
+  const register = () => () => {};
+
+  const throwIfRequested = () => undefined;
+
+  return {
+    register,
+    cancellationRequested: false,
+    throwIfRequested
+  };
+};
+
+exports.createCancellationToken = createCancellationToken;
+
+const trackOperation = (cancellationToken, promise, {
+  abort,
+  stop
+} = {}) => {
+  const cancelPromise = new Promise((resolve, reject) => {
+    const unregisterRejectOnCancel = cancellationToken.register(reason => {
+      // unregister immediatly so it won't appear in cancel() values
+      unregisterRejectOnCancel();
+      reject(createCancelError(reason));
+    });
+    promise.then(unregisterRejectOnCancel, reject);
+
+    if (abort) {
+      const unregisterAbortOnCancel = cancellationToken.register(reason => {
+        return abort(reason);
+      });
+      promise.then(unregisterAbortOnCancel, reject);
+    }
+
+    if (stop) {
+      cancellationToken.register(reason => {
+        return promise.then(() => stop(reason));
+      });
+    }
+  });
+  return Promise.race([promise, cancelPromise]);
+};
+
+exports.trackOperation = trackOperation;
 //# sourceMappingURL=cancellation.js.map

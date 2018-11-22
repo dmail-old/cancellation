@@ -1,7 +1,8 @@
 export {
+  createCancelError,
+  isCancelError,
   createCancellationToken,
   createCancellationSource,
   cancellationTokenCompose,
-  toRejectedIfRequested,
-  toPendingIfRequested,
+  trackOperation,
 } from "./src/cancellation.js"

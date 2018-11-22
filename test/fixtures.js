@@ -1,23 +1,20 @@
 import http from "http"
-import { createCancellationToken, toPendingIfRequested } from "../index.js"
+import { createCancellationToken, trackOperation } from "../index.js"
 
 export const startServer = async ({ cancellationToken = createCancellationToken() } = {}) => {
-  await toPendingIfRequested(cancellationToken)
+  cancellationToken.throwIfRequested()
 
   const server = http.createServer()
 
-  const opened = toPendingIfRequested(
-    cancellationToken,
-    new Promise((resolve, reject) => {
-      server.on("error", reject)
-      server.on("listening", resolve)
-      server.listen(3000, "127.0.0.1")
-    }),
-  )
+  const opened = new Promise((resolve, reject) => {
+    server.on("error", reject)
+    server.on("listening", () => {
+      resolve(server.address().port)
+    })
+    server.listen(0, "127.0.0.1")
+  })
 
   const close = async (reason) => {
-    // we must wait for the server to be opened before being able to close it
-    await opened
     return new Promise((resolve, reject) => {
       server.once("close", (error) => {
         if (error) {
@@ -30,46 +27,39 @@ export const startServer = async ({ cancellationToken = createCancellationToken(
     })
   }
 
-  cancellationToken.register(close)
   process.on("exit", close)
 
-  await opened
+  const port = await trackOperation(cancellationToken, opened, { stop: close })
   server.on("request", (request, response) => {
     response.writeHead(200)
     response.end()
   })
+
+  return port
 }
 
-export const requestServer = async ({ cancellationToken = createCancellationToken() } = {}) => {
-  await toPendingIfRequested(cancellationToken)
+export const requestServer = async ({ cancellationToken = createCancellationToken(), port }) => {
+  cancellationToken.throwIfRequested()
 
   const request = http.request({
-    port: 3000,
+    port,
     hostname: "127.0.0.1",
   })
 
   let aborting = false
-  const responded = toPendingIfRequested(
-    cancellationToken,
-    new Promise((resolve, reject) => {
-      request.on("response", resolve)
-      request.on("error", (error) => {
-        // abort will trigger a ECONNRESET error
-        if (
-          aborting &&
-          error &&
-          error.code === "ECONNRESET" &&
-          error.message === "socket hang up"
-        ) {
-          return
-        }
-        reject(error)
-      })
-    }),
-  )
+  const responded = new Promise((resolve, reject) => {
+    request.on("response", resolve)
+    request.on("error", (error) => {
+      // abort will trigger a ECONNRESET error
+      if (aborting && error && error.code === "ECONNRESET" && error.message === "socket hang up") {
+        return
+      }
+      console.log("yep", cancellationToken.cancellationRequested)
+      reject(error)
+    })
+  })
 
-  request.end()
-  const unregisterAbortCancellation = cancellationToken.register((reason) => {
+  const abort = (reason) => {
     aborting = true
     return new Promise((resolve) => {
       request.on("abort", () => {
@@ -77,8 +67,9 @@ export const requestServer = async ({ cancellationToken = createCancellationToke
       })
       request.abort()
     })
-  })
-  responded.then(() => unregisterAbortCancellation())
+  }
 
-  return responded
+  request.end()
+
+  return trackOperation(cancellationToken, responded, { abort })
 }
