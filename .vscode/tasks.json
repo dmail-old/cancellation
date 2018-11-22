@@ -6,6 +6,7 @@
     {
       "type": "npm",
       "script": "code-compile",
+      "label": "compile",
       "presentation": {
         "reveal": "silent",
         "panel": "shared"

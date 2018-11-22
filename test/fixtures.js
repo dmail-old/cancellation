@@ -1,16 +1,12 @@
 import http from "http"
-import {
-  createCancellationToken,
-  cancellationTokenToPromise,
-  cancellationTokenWrapPromise,
-} from "../index.js"
+import { createCancellationToken, toPendingIfRequested } from "../index.js"
 
 export const startServer = async ({ cancellationToken = createCancellationToken() } = {}) => {
-  await cancellationTokenToPromise(cancellationToken)
+  await toPendingIfRequested(cancellationToken)
 
   const server = http.createServer()
 
-  const opened = cancellationTokenWrapPromise(
+  const opened = toPendingIfRequested(
     cancellationToken,
     new Promise((resolve, reject) => {
       server.on("error", reject)
@@ -45,7 +41,7 @@ export const startServer = async ({ cancellationToken = createCancellationToken(
 }
 
 export const requestServer = async ({ cancellationToken = createCancellationToken() } = {}) => {
-  await cancellationTokenToPromise(cancellationToken)
+  await toPendingIfRequested(cancellationToken)
 
   const request = http.request({
     port: 3000,
@@ -53,7 +49,7 @@ export const requestServer = async ({ cancellationToken = createCancellationToke
   })
 
   let aborting = false
-  const responded = cancellationTokenWrapPromise(
+  const responded = toPendingIfRequested(
     cancellationToken,
     new Promise((resolve, reject) => {
       request.on("response", resolve)

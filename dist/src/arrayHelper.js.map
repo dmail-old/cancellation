@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": [
-    "src/arrayHelper.js"
+    "/src/arrayHelper.js"
   ],
   "names": [
     "arrayWithout",
@@ -13,8 +13,5 @@
     "value",
     "push"
   ],
-  "mappings": ";;;;;;;AAAA;AACA;AAEO,MAAMA,YAAY,GAAG,CAACC,KAAD,EAAQC,IAAR,KAAiB;AAC3C,QAAMC,gBAAgB,GAAG,EAAzB;AACA,MAAIC,CAAC,GAAG,CAAR;;AACA,SAAOA,CAAC,GAAGH,KAAK,CAACI,MAAjB,EAAyB;AACvB,UAAMC,KAAK,GAAGL,KAAK,CAACG,CAAD,CAAnB;AACAA,IAAAA,CAAC;;AACD,QAAIE,KAAK,KAAKJ,IAAd,EAAoB;AAClB;AACD;;AACDC,IAAAA,gBAAgB,CAACI,IAAjB,CAAsBD,KAAtB;AACD;;AACD,SAAOH,gBAAP;AACD,CAZM",
-  "sourcesContent": [
-    "// TODO: externalize this into '@dmail/helper'\n// import { arrayWithout } from '@dmail/helper'\n\nexport const arrayWithout = (array, item) => {\n  const arrayWithoutItem = []\n  let i = 0\n  while (i < array.length) {\n    const value = array[i]\n    i++\n    if (value === item) {\n      continue\n    }\n    arrayWithoutItem.push(value)\n  }\n  return arrayWithoutItem\n}\n"
-  ]
+  "mappings": ";;;;;;;AAAA;AACA;AAEO,MAAMA,YAAY,GAAG,CAACC,KAAD,EAAQC,IAAR,KAAiB;AAC3C,QAAMC,gBAAgB,GAAG,EAAzB;AACA,MAAIC,CAAC,GAAG,CAAR;;AACA,SAAOA,CAAC,GAAGH,KAAK,CAACI,MAAjB,EAAyB;AACvB,UAAMC,KAAK,GAAGL,KAAK,CAACG,CAAD,CAAnB;AACAA,IAAAA,CAAC;;AACD,QAAIE,KAAK,KAAKJ,IAAd,EAAoB;AAClB;AACD;;AACDC,IAAAA,gBAAgB,CAACI,IAAjB,CAAsBD,KAAtB;AACD;;AACD,SAAOH,gBAAP;AACD,CAZM"
 }

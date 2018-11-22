@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": [
-    "test/toRequestedPromise.test.js"
+    "/test/toRequestedPromise.test.js"
   ],
   "names": [
     "test",
@@ -13,8 +13,5 @@
     "equal",
     "setTimeout"
   ],
-  "mappings": ";;AAAA;;AACA;;;;AAEA;AACE,QAAMA,IAAI,GAAG,YAAY;AACvB,UAAM;AAAEC,MAAAA,KAAF;AAASC,MAAAA;AAAT,QAAoB,sCAA1B;AAEAA,IAAAA,MAAM,CAAC,QAAD,CAAN;AACA,UAAMC,MAAM,GAAG,MAAMF,KAAK,CAACG,kBAAN,EAArB;;AAEAC,oBAAOC,KAAP,CAAaH,MAAb,EAAqB,QAArB;AACD,GAPD;;AAQAH,EAAAA,IAAI;AACL;AAED;AACE,QAAMA,IAAI,GAAG,YAAY;AACvB,UAAM;AAAEC,MAAAA,KAAF;AAASC,MAAAA;AAAT,QAAoB,sCAA1B;AAEAK,IAAAA,UAAU,CAAC,MAAML,MAAM,CAAC,QAAD,CAAb,EAAyB,EAAzB,CAAV;AACA,UAAMC,MAAM,GAAG,MAAMF,KAAK,CAACG,kBAAN,EAArB;;AAEAC,oBAAOC,KAAP,CAAaH,MAAb,EAAqB,QAArB;AACD,GAPD;;AAQAH,EAAAA,IAAI;AACL",
-  "sourcesContent": [
-    "import assert from \"assert\"\nimport { createCancellationSource } from \"../index.js\"\n\n{\n  const test = async () => {\n    const { token, cancel } = createCancellationSource()\n\n    cancel(\"cancel\")\n    const reason = await token.toRequestedPromise()\n\n    assert.equal(reason, \"cancel\")\n  }\n  test()\n}\n\n{\n  const test = async () => {\n    const { token, cancel } = createCancellationSource()\n\n    setTimeout(() => cancel(\"cancel\"), 10)\n    const reason = await token.toRequestedPromise()\n\n    assert.equal(reason, \"cancel\")\n  }\n  test()\n}\n"
-  ]
+  "mappings": ";;AAAA;;AACA;;;;AAEA;AACE,QAAMA,IAAI,GAAG,YAAY;AACvB,UAAM;AAAEC,MAAAA,KAAF;AAASC,MAAAA;AAAT,QAAoB,sCAA1B;AAEAA,IAAAA,MAAM,CAAC,QAAD,CAAN;AACA,UAAMC,MAAM,GAAG,MAAMF,KAAK,CAACG,kBAAN,EAArB;;AAEAC,oBAAOC,KAAP,CAAaH,MAAb,EAAqB,QAArB;AACD,GAPD;;AAQAH,EAAAA,IAAI;AACL;AAED;AACE,QAAMA,IAAI,GAAG,YAAY;AACvB,UAAM;AAAEC,MAAAA,KAAF;AAASC,MAAAA;AAAT,QAAoB,sCAA1B;AAEAK,IAAAA,UAAU,CAAC,MAAML,MAAM,CAAC,QAAD,CAAb,EAAyB,EAAzB,CAAV;AACA,UAAMC,MAAM,GAAG,MAAMF,KAAK,CAACG,kBAAN,EAArB;;AAEAC,oBAAOC,KAAP,CAAaH,MAAb,EAAqB,QAArB;AACD,GAPD;;AAQAH,EAAAA,IAAI;AACL"
 }

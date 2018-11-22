@@ -3,39 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.cancellationTokenWrapPromise = exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.cancellationTokenToPromise = exports.toPendingPromise = exports.toRejectedPromise = exports.createCanceledError = void 0;
+exports.toPendingIfRequested = exports.toRejectedIfRequested = exports.createCancelError = exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = void 0;
 
 var _arrayHelper = require("./arrayHelper.js");
 
 // https://github.com/tc39/proposal-cancellation/tree/master/stage0
-const createCanceledError = reason => {
-  const canceledError = new Error(`canceled because ${reason}`);
-  canceledError.name = "CANCELED_ERROR";
-  return canceledError;
-};
-
-exports.createCanceledError = createCanceledError;
-
-const toRejectedPromise = reason => Promise.reject(createCanceledError(reason)); // It may lead to memory leak but it has to be tested
-
-
-exports.toRejectedPromise = toRejectedPromise;
-
-const toPendingPromise = () => new Promise(() => {});
-
-exports.toPendingPromise = toPendingPromise;
-const pendingFlag = {};
-
-const cancellationTokenToPromise = ({
-  toRequestedPromise
-}) => {
-  return Promise.race([toRequestedPromise(), Promise.resolve(pendingFlag)]).then(value => {
-    return value === pendingFlag ? undefined : toPendingPromise(value);
-  });
-};
-
-exports.cancellationTokenToPromise = cancellationTokenToPromise;
-
 const createCancellationSource = () => {
   let canceled = false;
   let callbacks = [];
@@ -115,9 +87,42 @@ const createCancellationToken = () => {
 };
 
 exports.createCancellationToken = createCancellationToken;
+const pendingFlag = {};
 
-const cancellationTokenWrapPromise = (cancellationToken, promise) => {
-  return Promise.race([promise, cancellationToken.toRequestedPromise().then(toPendingPromise)]);
+const cancellationTokenToPromiseIfRequested = ({
+  toRequestedPromise
+}, promises, requestedToPromise) => {
+  if (promises.length === 0) {
+    return Promise.race([toRequestedPromise(), pendingFlag]).then(value => {
+      return value === pendingFlag ? undefined : requestedToPromise(value);
+    });
+  }
+
+  return Promise.race([...promises, toRequestedPromise().then(requestedToPromise)]);
+};
+
+const createCancelError = reason => {
+  const cancelError = new Error(`canceled because ${reason}`);
+  cancelError.name = "CANCEL_ERROR";
+  cancelError.reason = reason;
+  return cancelError;
+};
+
+exports.createCancelError = createCancelError;
+
+const toRejectedPromise = reason => Promise.reject(createCancelError(reason));
+
+const toRejectedIfRequested = (cancellationToken, ...promises) => {
+  return cancellationTokenToPromiseIfRequested(cancellationToken, promises, toRejectedPromise);
+}; // It may lead to memory leak but it has to be tested
+
+
+exports.toRejectedIfRequested = toRejectedIfRequested;
+
+const toPendingPromise = () => new Promise(() => {});
+
+const toPendingIfRequested = (cancellationToken, ...promises) => {
+  return cancellationTokenToPromiseIfRequested(cancellationToken, promises, toPendingPromise);
 }; // export const cancelllationTokenCanceled = {
 //   register: () => () => {},
 //   isRequested: () => true,
@@ -125,5 +130,5 @@ const cancellationTokenWrapPromise = (cancellationToken, promise) => {
 // }
 
 
-exports.cancellationTokenWrapPromise = cancellationTokenWrapPromise;
+exports.toPendingIfRequested = toPendingIfRequested;
 //# sourceMappingURL=cancellation.js.map

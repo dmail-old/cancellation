@@ -14,11 +14,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const startServer = async ({
   cancellationToken = (0, _index.createCancellationToken)()
 } = {}) => {
-  await (0, _index.cancellationTokenToPromise)(cancellationToken);
+  await (0, _index.toPendingIfRequested)(cancellationToken);
 
   const server = _http.default.createServer();
 
-  const opened = (0, _index.cancellationTokenWrapPromise)(cancellationToken, new Promise((resolve, reject) => {
+  const opened = (0, _index.toPendingIfRequested)(cancellationToken, new Promise((resolve, reject) => {
     server.on("error", reject);
     server.on("listening", resolve);
     server.listen(3000, "127.0.0.1");
@@ -53,7 +53,7 @@ exports.startServer = startServer;
 const requestServer = async ({
   cancellationToken = (0, _index.createCancellationToken)()
 } = {}) => {
-  await (0, _index.cancellationTokenToPromise)(cancellationToken);
+  await (0, _index.toPendingIfRequested)(cancellationToken);
 
   const request = _http.default.request({
     port: 3000,
@@ -61,7 +61,7 @@ const requestServer = async ({
   });
 
   let aborting = false;
-  const responded = (0, _index.cancellationTokenWrapPromise)(cancellationToken, new Promise((resolve, reject) => {
+  const responded = (0, _index.toPendingIfRequested)(cancellationToken, new Promise((resolve, reject) => {
     request.on("response", resolve);
     request.on("error", error => {
       // abort will trigger a ECONNRESET error

@@ -2,6 +2,6 @@ export {
   createCancellationToken,
   createCancellationSource,
   cancellationTokenCompose,
-  cancellationTokenToPromise,
-  cancellationTokenWrapPromise,
+  toRejectedIfRequested,
+  toPendingIfRequested,
 } from "./src/cancellation.js"

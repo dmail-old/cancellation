@@ -21,16 +21,16 @@ Object.defineProperty(exports, "cancellationTokenCompose", {
     return _cancellation.cancellationTokenCompose;
   }
 });
-Object.defineProperty(exports, "cancellationTokenToPromise", {
+Object.defineProperty(exports, "toRejectedIfRequested", {
   enumerable: true,
   get: function () {
-    return _cancellation.cancellationTokenToPromise;
+    return _cancellation.toRejectedIfRequested;
   }
 });
-Object.defineProperty(exports, "cancellationTokenWrapPromise", {
+Object.defineProperty(exports, "toPendingIfRequested", {
   enumerable: true,
   get: function () {
-    return _cancellation.cancellationTokenWrapPromise;
+    return _cancellation.toPendingIfRequested;
   }
 });
 

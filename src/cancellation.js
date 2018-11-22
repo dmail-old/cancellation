@@ -1,23 +1,5 @@
-import { arrayWithout } from "./arrayHelper.js"
-
 // https://github.com/tc39/proposal-cancellation/tree/master/stage0
-export const createCanceledError = (reason) => {
-  const canceledError = new Error(`canceled because ${reason}`)
-  canceledError.name = "CANCELED_ERROR"
-  return canceledError
-}
-
-export const toRejectedPromise = (reason) => Promise.reject(createCanceledError(reason))
-
-// It may lead to memory leak but it has to be tested
-export const toPendingPromise = () => new Promise(() => {})
-
-const pendingFlag = {}
-export const cancellationTokenToPromise = ({ toRequestedPromise }) => {
-  return Promise.race([toRequestedPromise(), Promise.resolve(pendingFlag)]).then((value) => {
-    return value === pendingFlag ? undefined : toPendingPromise(value)
-  })
-}
+import { arrayWithout } from "./arrayHelper.js"
 
 export const createCancellationSource = () => {
   let canceled = false
@@ -93,8 +75,34 @@ export const createCancellationToken = () => {
   }
 }
 
-export const cancellationTokenWrapPromise = (cancellationToken, promise) => {
-  return Promise.race([promise, cancellationToken.toRequestedPromise().then(toPendingPromise)])
+const pendingFlag = {}
+const cancellationTokenToPromiseIfRequested = (
+  { toRequestedPromise },
+  promises,
+  requestedToPromise,
+) => {
+  if (promises.length === 0) {
+    return Promise.race([toRequestedPromise(), pendingFlag]).then((value) => {
+      return value === pendingFlag ? undefined : requestedToPromise(value)
+    })
+  }
+  return Promise.race([...promises, toRequestedPromise().then(requestedToPromise)])
+}
+
+export const createCancelError = (reason) => {
+  const cancelError = new Error(`canceled because ${reason}`)
+  cancelError.name = "CANCEL_ERROR"
+  cancelError.reason = reason
+  return cancelError
+}
+const toRejectedPromise = (reason) => Promise.reject(createCancelError(reason))
+export const toRejectedIfRequested = (cancellationToken, ...promises) => {
+  return cancellationTokenToPromiseIfRequested(cancellationToken, promises, toRejectedPromise)
+}
+// It may lead to memory leak but it has to be tested
+const toPendingPromise = () => new Promise(() => {})
+export const toPendingIfRequested = (cancellationToken, ...promises) => {
+  return cancellationTokenToPromiseIfRequested(cancellationToken, promises, toPendingPromise)
 }
 
 // export const cancelllationTokenCanceled = {

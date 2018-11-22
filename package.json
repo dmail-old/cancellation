@@ -18,8 +18,7 @@
 	"engines": {
 		"node": ">=8.6.0"
 	},
-	"dependencies": {
-	},
+	"dependencies": {},
 	"devDependencies": {
 		"@dmail/project-structure": "github:dmail/project-structure",
 		"@dmail/project-structure-compile-babel": "github:dmail/project-structure-compile-babel",
@@ -42,6 +41,7 @@
 		"repo-reinstall": "npm run repo-reset && npm install",
 		"build": "npm run code-build",
 		"compile": "npm run code-compile",
+		"test": "node ./script/test.js",
 		"prepublishOnly": "npm run code-build",
 		"reinstall": "npm run repo-reinstall"
 	}
