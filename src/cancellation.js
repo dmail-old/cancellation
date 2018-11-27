@@ -140,3 +140,13 @@ export const createCancellationToken = () => {
     throwIfRequested,
   }
 }
+
+export const cancellationTokenToPromise = (cancellationToken) => {
+  return new Promise((resolve, reject) => {
+    cancellationToken.throwIfRequested()
+    const rejectRegistration = cancellationToken.register((reason) => {
+      rejectRegistration.unregister()
+      reject(createCancelError(reason))
+    })
+  })
+}
