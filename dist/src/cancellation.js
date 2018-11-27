@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
+exports.cancellationTokenToPromise = exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
 
 var _arrayHelper = require("./arrayHelper.js");
 
@@ -161,4 +161,16 @@ const createCancellationToken = () => {
 };
 
 exports.createCancellationToken = createCancellationToken;
+
+const cancellationTokenToPromise = cancellationToken => {
+  return new Promise((resolve, reject) => {
+    cancellationToken.throwIfRequested();
+    const rejectRegistration = cancellationToken.register(reason => {
+      rejectRegistration.unregister();
+      reject(createCancelError(reason));
+    });
+  });
+};
+
+exports.cancellationTokenToPromise = cancellationTokenToPromise;
 //# sourceMappingURL=cancellation.js.map

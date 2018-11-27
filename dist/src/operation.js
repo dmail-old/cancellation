@@ -14,17 +14,17 @@ const createOperation = ({
   promise
 }) => {
   // we must have either abort or stop but not both and not none
-  let cancelRequested = false;
-  let cancelResolve;
-  const cancelPromise = new Promise(resolve => {
-    cancelResolve = resolve;
+  let abortOrStopRequested = false;
+  let abortOrStopResolve;
+  const abortOrStopPromise = new Promise(resolve => {
+    abortOrStopResolve = resolve;
   });
 
-  const cancel = reason => {
-    if (cancelRequested) return cancelPromise;
-    cancelRequested = true;
-    cancelResolve(abort ? abort(reason) : promise.then(() => stop(reason)));
-    return cancelPromise;
+  const abortOrStop = reason => {
+    if (abortOrStopRequested) return abortOrStopPromise;
+    abortOrStopRequested = true;
+    abortOrStopResolve(abort ? abort(reason) : promise.then(() => stop(reason)));
+    return abortOrStopPromise;
   };
 
   const cancellationRequestedPromise = new Promise((resolve, reject) => {
@@ -36,14 +36,14 @@ const createOperation = ({
     promise.then(rejectRegistration.unregister, reject);
 
     if (abort) {
-      const abortRegistration = cancellationToken.register(cancel);
+      const abortRegistration = cancellationToken.register(abortOrStop);
       promise.then(abortRegistration.unregister, reject);
     } else if (stop) {
-      cancellationToken.register(cancel);
+      cancellationToken.register(abortOrStop);
     }
   });
   const operationPromise = Promise.race([promise, cancellationRequestedPromise]);
-  operationPromise.cancel = cancel;
+  operationPromise[stop ? "stop" : "abort"] = abortOrStop;
   return operationPromise;
 };
 

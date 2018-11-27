@@ -33,6 +33,12 @@ Object.defineProperty(exports, "cancellationTokenCompose", {
     return _cancellation.cancellationTokenCompose;
   }
 });
+Object.defineProperty(exports, "cancellationTokenToPromise", {
+  enumerable: true,
+  get: function () {
+    return _cancellation.cancellationTokenToPromise;
+  }
+});
 Object.defineProperty(exports, "createOperation", {
   enumerable: true,
   get: function () {
