@@ -84,30 +84,37 @@ export const createCancellationSource = () => {
 }
 
 export const cancellationTokenCompose = (...tokens) => {
+  const register = (callback) => {
+    const registrationArray = []
+
+    const visit = (i) => {
+      const token = tokens[i]
+      const registration = token.register(callback)
+      registrationArray.push(registration)
+    }
+    let i = 0
+    while (i < tokens.length) {
+      visit(i++)
+    }
+
+    const compositeRegistration = {
+      callback,
+      unregister: () => {
+        registrationArray.forEach((registration) => registration.unregister())
+        registrationArray.length = 0
+      },
+    }
+
+    return compositeRegistration
+  }
+
   let requested = false
   let cancelReason
-
-  const visit = (i) => {
-    const token = tokens[i]
-    const registration = token.register((reason) => {
-      if (requested) return
-      requested = true
-      registration.unregister()
-      cancelReason = reason
-    })
-  }
-  let i = 0
-  while (i < tokens.length) {
-    visit(i++)
-    if (requested) {
-      break
-    }
-  }
-
-  const register = (callback) => {
-    const registrationArray = tokens.map((token) => token.register(callback))
-    return () => registrationArray.forEach((registration) => registration.unregister())
-  }
+  const internalRegistration = register((reason) => {
+    requested = true
+    cancelReason = reason
+    internalRegistration.unregister()
+  })
 
   const throwIfRequested = () => {
     if (requested) {
