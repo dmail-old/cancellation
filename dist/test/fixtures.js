@@ -42,7 +42,7 @@ const startServer = async ({
     promise,
     stop
   });
-  process.on("exit", operation.cancel);
+  process.on("exit", operation.stop);
   const port = await operation;
   server.on("request", (request, response) => {
     response.writeHead(200);
@@ -95,4 +95,4 @@ const requestServer = async ({
 };
 
 exports.requestServer = requestServer;
-//# sourceMappingURL=fixtures.js.map
+//# sourceMappingURL=./fixtures.js.map

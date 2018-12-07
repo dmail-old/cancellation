@@ -178,4 +178,4 @@ const cancellationTokenToPromise = cancellationToken => {
 };
 
 exports.cancellationTokenToPromise = cancellationTokenToPromise;
-//# sourceMappingURL=cancellation.js.map
+//# sourceMappingURL=./cancellation.js.map

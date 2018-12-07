@@ -1,14 +1,10 @@
 "use strict";
 
+var _assert = require("@dmail/assert");
+
 var _index = require("../index.js");
 
 var _fixtures = require("./fixtures.js");
-
-var _assert = _interopRequireDefault(require("assert"));
-
-var _cancellation = require("../src/cancellation.js");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const test = async () => {
   {
@@ -23,8 +19,10 @@ const test = async () => {
       });
       const port = await portPromise;
       cancel("cancel").then(values => {
-        _assert.default.deepEqual(values, ["server closed because cancel"]);
-
+        (0, _assert.assert)({
+          actual: values,
+          expected: ["server closed because cancel"]
+        });
         console.log("passed");
       });
       const responsePromise = (0, _fixtures.requestServer)({
@@ -32,13 +30,18 @@ const test = async () => {
         port
       });
       const response = await responsePromise;
-
-      _assert.default.deepEqual(response.statusCode, 200);
+      (0, _assert.assert)({
+        actual: response.statusCode,
+        expected: 200
+      });
     } catch (error) {
-      _assert.default.equal((0, _cancellation.isCancelError)(error), true);
+      (0, _assert.assert)({
+        actual: (0, _index.isCancelError)(error),
+        expected: true
+      });
     }
   }
 };
 
 test();
-//# sourceMappingURL=cancel-2.js.map
+//# sourceMappingURL=./cancel-2.js.map

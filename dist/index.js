@@ -49,4 +49,4 @@ Object.defineProperty(exports, "createOperation", {
 var _cancellation = require("./src/cancellation.js");
 
 var _operation = require("./src/operation.js");
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=./index.js.map

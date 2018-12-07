@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": [
-    "/src/arrayHelper.js"
+    "../../src/arrayHelper.js"
   ],
   "names": [
     "arrayWithout",
