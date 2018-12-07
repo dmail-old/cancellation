@@ -1,8 +1,8 @@
-# cancel
+# cancellation
 
-[![npm](https://badge.fury.io/js/%40dmail%2Fcancel.svg)](https://badge.fury.io/js/%40dmail%2Fcancel)
-[![build](https://travis-ci.org/dmail/cancel.svg?branch=master)](http://travis-ci.org/dmail/cancel)
-[![codecov](https://codecov.io/gh/dmail/cancel/branch/master/graph/badge.svg)](https://codecov.io/gh/dmail/cancel)
+[![npm](https://badge.fury.io/js/%40dmail%2Fcancellation.svg)](https://badge.fury.io/js/%40dmail%2Fcancel)
+[![build](https://travis-ci.com/dmail/cancellation.svg?branch=master)](http://travis-ci.org/dmail/cancel)
+[![codecov](https://codecov.io/gh/dmail/cancellation/branch/master/graph/badge.svg)](https://codecov.io/gh/dmail/cancel)
 
 > Cancel asynchronous operations, compatible with await
 

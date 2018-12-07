@@ -1,6 +1,6 @@
+import { assert } from "@dmail/assert"
 import { createCancellationSource } from "../index.js"
 import { startServer, requestServer } from "./fixtures.js"
-import assert from "assert"
 
 const test = async () => {
   {
@@ -13,13 +13,13 @@ const test = async () => {
       const response = await responsePromise
 
       cancel("cancel").then((values) => {
-        assert.deepEqual(values, ["server closed because cancel"])
+        assert({ actual: values, expected: ["server closed because cancel"] })
         console.log("passed")
       })
 
-      assert.deepEqual(response.statusCode, 200)
+      assert({ actual: response.statusCode, expected: 200 })
     } catch (error) {
-      assert.fail("must no be called")
+      assert({ message: "must no be called", actual: true, expected: false })
     }
   }
 }

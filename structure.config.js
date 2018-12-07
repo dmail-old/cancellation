@@ -15,6 +15,7 @@ module.exports = {
     },
     compile: {
       "index.js": true,
+      "index.test.js": true,
       "src/**/*.js": true,
       "test/**/*.js": true,
     },

@@ -1,0 +1,6 @@
+import "./test/cancel-0.js"
+import "./test/cancel-1.js"
+import "./test/cancel-2.js"
+import "./test/cancel-3-delayed.js"
+import "./test/cancel-3.js"
+import "./test/cancel-4.js"

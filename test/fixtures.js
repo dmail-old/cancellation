@@ -28,7 +28,7 @@ export const startServer = async ({ cancellationToken = createCancellationToken(
 
   const operation = createOperation({ cancellationToken, promise, stop })
 
-  process.on("exit", operation.cancel)
+  process.on("exit", operation.stop)
 
   const port = await operation
 
