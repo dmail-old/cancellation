@@ -9,11 +9,13 @@ var _cancellation = require("./cancellation.js");
 
 const createOperation = ({
   cancellationToken = (0, _cancellation.createCancellationToken)(),
-  stop,
-  abort,
-  promise
-}) => {
+  start,
   // we must have either abort or stop but not both and not none
+  stop,
+  abort
+}) => {
+  cancellationToken.throwIfRequested();
+  const promise = start();
   let abortOrStopRequested = false;
   let abortOrStopResolve;
   const abortOrStopPromise = new Promise(resolve => {
@@ -22,8 +24,9 @@ const createOperation = ({
 
   const abortOrStop = reason => {
     if (abortOrStopRequested) return abortOrStopPromise;
+    operationPromise.reason = reason;
     abortOrStopRequested = true;
-    abortOrStopResolve(abort ? abort(reason) : promise.then(() => stop(reason)));
+    abortOrStopResolve(abort ? abort() : promise.then(value => stop(value)));
     return abortOrStopPromise;
   };
 
