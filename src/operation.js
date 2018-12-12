@@ -2,11 +2,14 @@ import { createCancellationToken, createCancelError } from "./cancellation.js"
 
 export const createOperation = ({
   cancellationToken = createCancellationToken(),
+  start,
+  // we must have either abort or stop but not both and not none
   stop,
   abort,
-  promise,
 }) => {
-  // we must have either abort or stop but not both and not none
+  cancellationToken.throwIfRequested()
+
+  const promise = start()
 
   let abortOrStopRequested = false
   let abortOrStopResolve
@@ -15,8 +18,9 @@ export const createOperation = ({
   })
   const abortOrStop = (reason) => {
     if (abortOrStopRequested) return abortOrStopPromise
+    operationPromise.reason = reason
     abortOrStopRequested = true
-    abortOrStopResolve(abort ? abort(reason) : promise.then(() => stop(reason)))
+    abortOrStopResolve(abort ? abort() : promise.then((value) => stop(value)))
     return abortOrStopPromise
   }
 

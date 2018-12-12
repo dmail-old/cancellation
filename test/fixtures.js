@@ -6,27 +6,28 @@ export const startServer = async ({ cancellationToken = createCancellationToken(
 
   const server = http.createServer()
 
-  const promise = new Promise((resolve, reject) => {
-    server.on("error", reject)
-    server.on("listening", () => {
-      resolve(server.address().port)
-    })
-    server.listen(0, "127.0.0.1")
+  const operation = createOperation({
+    cancellationToken,
+    start: () =>
+      new Promise((resolve, reject) => {
+        server.on("error", reject)
+        server.on("listening", () => {
+          resolve(server.address().port)
+        })
+        server.listen(0, "127.0.0.1")
+      }),
+    stop: () =>
+      new Promise((resolve, reject) => {
+        server.once("close", (error) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(`server closed because ${operation.reason}`)
+          }
+        })
+        server.close()
+      }),
   })
-
-  const stop = (reason) =>
-    new Promise((resolve, reject) => {
-      server.once("close", (error) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(`server closed because ${reason}`)
-        }
-      })
-      server.close()
-    })
-
-  const operation = createOperation({ cancellationToken, promise, stop })
 
   process.on("exit", operation.stop)
 
@@ -49,27 +50,34 @@ export const requestServer = async ({ cancellationToken = createCancellationToke
   })
 
   let aborting = false
-  const promise = new Promise((resolve, reject) => {
-    request.on("response", resolve)
-    request.on("error", (error) => {
-      // abort may trigger a ECONNRESET error
-      if (aborting && error && error.code === "ECONNRESET" && error.message === "socket hang up") {
-        return
-      }
-      reject(error)
-    })
+
+  const operation = createOperation({
+    cancellationToken,
+    start: () =>
+      new Promise((resolve, reject) => {
+        request.on("response", resolve)
+        request.on("error", (error) => {
+          // abort may trigger a ECONNRESET error
+          if (
+            aborting &&
+            error &&
+            error.code === "ECONNRESET" &&
+            error.message === "socket hang up"
+          ) {
+            return
+          }
+          reject(error)
+        })
+      }),
+    abort: () =>
+      new Promise((resolve) => {
+        aborting = true
+        request.on("abort", () => {
+          resolve(`request aborted because ${operation.reason}`)
+        })
+        request.abort()
+      }),
   })
-
-  const abort = (reason) =>
-    new Promise((resolve) => {
-      aborting = true
-      request.on("abort", () => {
-        resolve(`request aborted because ${reason}`)
-      })
-      request.abort()
-    })
-
-  const operation = createOperation({ cancellationToken, promise, abort })
 
   request.end()
 
