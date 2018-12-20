@@ -1,6 +1,15 @@
 import { createCancellationToken } from "./cancellation.js"
 
-export const createOperation = ({ cancellationToken = createCancellationToken(), start }) => {
+export const createOperation = ({
+  cancellationToken = createCancellationToken(),
+  start,
+  ...rest
+}) => {
+  if (Object.keys(rest).length)
+    throw new Error(
+      `createOperation expect only cancellationToken, start. Got ${Object.keys(rest)}`,
+    )
+
   cancellationToken.throwIfRequested()
 
   const promise = start()
