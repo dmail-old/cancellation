@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "sources": [
+    "../../src/createAbortableOperation.js"
+  ],
+  "names": [
+    "createAbortableOperation",
+    "cancellationToken",
+    "start",
+    "abort",
+    "throwIfRequested",
+    "promise",
+    "cancelPromise",
+    "Promise",
+    "resolve",
+    "reject",
+    "cancelRegistration",
+    "register",
+    "cancelError",
+    "unregister",
+    "then",
+    "operationPromise",
+    "race",
+    "abortInternal",
+    "abortRegistration"
+  ],
+  "mappings": ";;;;;;;AAAA;;AACA;;AAEO,MAAMA,wBAAwB,GAAG,CAAC;AACvCC,EAAAA,iBAAiB,GAAG,4CADmB;AAEvCC,EAAAA,KAFuC;AAGvCC,EAAAA;AAHuC,CAAD,KAIlC;AACJF,EAAAA,iBAAiB,CAACG,gBAAlB;AAEA,QAAMC,OAAO,GAAGH,KAAK,EAArB;AACA,QAAMI,aAAa,GAAG,IAAIC,OAAJ,CAAY,CAACC,OAAD,EAAUC,MAAV,KAAqB;AACrD,UAAMC,kBAAkB,GAAGT,iBAAiB,CAACU,QAAlB,CAA4BC,WAAD,IAAiB;AACrEF,MAAAA,kBAAkB,CAACG,UAAnB;AACAJ,MAAAA,MAAM,CAACG,WAAD,CAAN;AACD,KAH0B,CAA3B;AAIAP,IAAAA,OAAO,CAACS,IAAR,CAAaJ,kBAAkB,CAACG,UAAhC;AACD,GANqB,CAAtB;AAOA,QAAME,gBAAgB,GAAGR,OAAO,CAACS,IAAR,CAAa,CAACX,OAAD,EAAUC,aAAV,CAAb,CAAzB;AAEA,QAAMW,aAAa,GAAG,8BAAYd,KAAZ,CAAtB;AACA,QAAMe,iBAAiB,GAAGjB,iBAAiB,CAACU,QAAlB,CAA2BM,aAA3B,CAA1B;AACAZ,EAAAA,OAAO,CAACS,IAAR,CAAaI,iBAAiB,CAACL,UAA/B;AACAE,EAAAA,gBAAgB,CAACZ,KAAjB,GAAyBc,aAAzB;AAEA,SAAOF,gBAAP;AACD,CAvBM"
+}

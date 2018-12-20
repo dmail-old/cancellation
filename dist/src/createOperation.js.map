@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "sources": [
+    "../../src/createOperation.js"
+  ],
+  "names": [
+    "createOperation",
+    "cancellationToken",
+    "start",
+    "throwIfRequested",
+    "promise",
+    "cancelPromise",
+    "Promise",
+    "resolve",
+    "reject",
+    "cancelRegistration",
+    "register",
+    "cancelError",
+    "unregister",
+    "then",
+    "operationPromise",
+    "race"
+  ],
+  "mappings": ";;;;;;;AAAA;;AAEO,MAAMA,eAAe,GAAG,CAAC;AAAEC,EAAAA,iBAAiB,GAAG,4CAAtB;AAAiDC,EAAAA;AAAjD,CAAD,KAA8D;AAC3FD,EAAAA,iBAAiB,CAACE,gBAAlB;AAEA,QAAMC,OAAO,GAAGF,KAAK,EAArB;AACA,QAAMG,aAAa,GAAG,IAAIC,OAAJ,CAAY,CAACC,OAAD,EAAUC,MAAV,KAAqB;AACrD,UAAMC,kBAAkB,GAAGR,iBAAiB,CAACS,QAAlB,CAA4BC,WAAD,IAAiB;AACrEF,MAAAA,kBAAkB,CAACG,UAAnB;AACAJ,MAAAA,MAAM,CAACG,WAAD,CAAN;AACD,KAH0B,CAA3B;AAIAP,IAAAA,OAAO,CAACS,IAAR,CAAaJ,kBAAkB,CAACG,UAAhC;AACD,GANqB,CAAtB;AAOA,QAAME,gBAAgB,GAAGR,OAAO,CAACS,IAAR,CAAa,CAACX,OAAD,EAAUC,aAAV,CAAb,CAAzB;AAEA,SAAOS,gBAAP;AACD,CAdM"
+}

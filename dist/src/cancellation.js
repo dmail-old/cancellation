@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.cancellationTokenToPromise = exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
+exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
 
 var _arrayHelper = require("./arrayHelper.js");
 
@@ -25,21 +25,18 @@ exports.isCancelError = isCancelError;
 
 const createCancellationSource = () => {
   let requested = false;
-  let cancelReason;
+  let cancelError;
   let cancelPromise;
   let registrationArray = [];
 
   const cancel = reason => {
-    if (requested) {
-      return cancelPromise;
-    }
-
+    if (requested) return cancelPromise;
     requested = true;
-    cancelReason = reason;
+    cancelError = createCancelError(reason);
     const values = [];
     cancelPromise = registrationArray.reduce(async (previous, registration) => {
       await previous;
-      const returnValue = registration.callback(reason);
+      const returnValue = registration.callback(cancelError);
       const value = await returnValue;
       const removedBeforeResolved = registrationArray.indexOf(registration) === -1; // if the callback is removed it means
       // what it does is not important
@@ -75,7 +72,7 @@ const createCancellationSource = () => {
 
   const throwIfRequested = () => {
     if (requested) {
-      throw createCancelError(cancelReason);
+      throw createCancelError(cancelError);
     }
   };
 
@@ -122,16 +119,16 @@ const cancellationTokenCompose = (...tokens) => {
   };
 
   let requested = false;
-  let cancelReason;
-  const internalRegistration = register(reason => {
+  let cancelError;
+  const internalRegistration = register(parentCancelError => {
     requested = true;
-    cancelReason = reason;
+    cancelError = parentCancelError;
     internalRegistration.unregister();
   });
 
   const throwIfRequested = () => {
     if (requested) {
-      throw createCancelError(cancelReason);
+      throw cancelError;
     }
   };
 
@@ -166,16 +163,4 @@ const createCancellationToken = () => {
 };
 
 exports.createCancellationToken = createCancellationToken;
-
-const cancellationTokenToPromise = cancellationToken => {
-  return new Promise((resolve, reject) => {
-    cancellationToken.throwIfRequested();
-    const rejectRegistration = cancellationToken.register(reason => {
-      rejectRegistration.unregister();
-      reject(createCancelError(reason));
-    });
-  });
-};
-
-exports.cancellationTokenToPromise = cancellationTokenToPromise;
 //# sourceMappingURL=./cancellation.js.map

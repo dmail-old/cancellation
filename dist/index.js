@@ -33,20 +33,30 @@ Object.defineProperty(exports, "cancellationTokenCompose", {
     return _cancellation.cancellationTokenCompose;
   }
 });
-Object.defineProperty(exports, "cancellationTokenToPromise", {
-  enumerable: true,
-  get: function () {
-    return _cancellation.cancellationTokenToPromise;
-  }
-});
 Object.defineProperty(exports, "createOperation", {
   enumerable: true,
   get: function () {
-    return _operation.createOperation;
+    return _createOperation.createOperation;
+  }
+});
+Object.defineProperty(exports, "createAbortableOperation", {
+  enumerable: true,
+  get: function () {
+    return _createAbortableOperation.createAbortableOperation;
+  }
+});
+Object.defineProperty(exports, "createStoppableOperation", {
+  enumerable: true,
+  get: function () {
+    return _createStoppableOperation.createStoppableOperation;
   }
 });
 
 var _cancellation = require("./src/cancellation.js");
 
-var _operation = require("./src/operation.js");
+var _createOperation = require("./src/createOperation.js");
+
+var _createAbortableOperation = require("./src/createAbortableOperation.js");
+
+var _createStoppableOperation = require("./src/createStoppableOperation.js");
 //# sourceMappingURL=./index.js.map
