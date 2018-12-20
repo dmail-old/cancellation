@@ -14,6 +14,7 @@ const createStoppableOperation = ({
   start,
   stop
 }) => {
+  if (typeof stop !== "function") throw new TypeError(`createStoppableOperation expect a stop function. got ${stop}`);
   cancellationToken.throwIfRequested();
   const promise = start();
   const cancelPromise = new Promise((resolve, reject) => {

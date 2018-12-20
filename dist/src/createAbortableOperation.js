@@ -14,6 +14,7 @@ const createAbortableOperation = ({
   start,
   abort
 }) => {
+  if (typeof abort !== "function") throw new TypeError(`createAbortableOperation expect an abort function. got ${abort}`);
   cancellationToken.throwIfRequested();
   const promise = start();
   const cancelPromise = new Promise((resolve, reject) => {
