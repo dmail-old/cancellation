@@ -1,12 +1,16 @@
 import http from "http"
-import { createCancellationToken, createOperation } from "../index.js"
+import {
+  createCancellationToken,
+  createStoppableOperation,
+  createAbortableOperation,
+} from "../index.js"
 
 export const startServer = async ({ cancellationToken = createCancellationToken() } = {}) => {
   cancellationToken.throwIfRequested()
 
   const server = http.createServer()
 
-  const operation = createOperation({
+  const operation = createStoppableOperation({
     cancellationToken,
     start: () =>
       new Promise((resolve, reject) => {
@@ -16,13 +20,13 @@ export const startServer = async ({ cancellationToken = createCancellationToken(
         })
         server.listen(0, "127.0.0.1")
       }),
-    stop: () =>
+    stop: (_, cancelError) =>
       new Promise((resolve, reject) => {
         server.once("close", (error) => {
           if (error) {
             reject(error)
           } else {
-            resolve(`server closed because ${operation.reason}`)
+            resolve(`server closed because ${cancelError.reason}`)
           }
         })
         server.close()
@@ -51,7 +55,7 @@ export const requestServer = async ({ cancellationToken = createCancellationToke
 
   let aborting = false
 
-  const operation = createOperation({
+  const operation = createAbortableOperation({
     cancellationToken,
     start: () =>
       new Promise((resolve, reject) => {
@@ -69,11 +73,11 @@ export const requestServer = async ({ cancellationToken = createCancellationToke
           reject(error)
         })
       }),
-    abort: () =>
+    abort: (cancelError) =>
       new Promise((resolve) => {
         aborting = true
         request.on("abort", () => {
-          resolve(`request aborted because ${operation.reason}`)
+          resolve(`request aborted because ${cancelError.reason}`)
         })
         request.abort()
       }),

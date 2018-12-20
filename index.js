@@ -4,7 +4,8 @@ export {
   createCancellationToken,
   createCancellationSource,
   cancellationTokenCompose,
-  cancellationTokenToPromise,
 } from "./src/cancellation.js"
 
-export { createOperation } from "./src/operation.js"
+export { createOperation } from "./src/createOperation.js"
+export { createAbortableOperation } from "./src/createAbortableOperation.js"
+export { createStoppableOperation } from "./src/createStoppableOperation.js"

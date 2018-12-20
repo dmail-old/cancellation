@@ -14,21 +14,19 @@ export const isCancelError = (value) => {
 
 export const createCancellationSource = () => {
   let requested = false
-  let cancelReason
+  let cancelError
   let cancelPromise
   let registrationArray = []
   const cancel = (reason) => {
-    if (requested) {
-      return cancelPromise
-    }
+    if (requested) return cancelPromise
     requested = true
-    cancelReason = reason
+    cancelError = createCancelError(reason)
 
     const values = []
     cancelPromise = registrationArray
       .reduce(async (previous, registration) => {
         await previous
-        const returnValue = registration.callback(reason)
+        const returnValue = registration.callback(cancelError)
         const value = await returnValue
         const removedBeforeResolved = registrationArray.indexOf(registration) === -1
         // if the callback is removed it means
@@ -67,7 +65,7 @@ export const createCancellationSource = () => {
 
   const throwIfRequested = () => {
     if (requested) {
-      throw createCancelError(cancelReason)
+      throw createCancelError(cancelError)
     }
   }
 
@@ -109,16 +107,16 @@ export const cancellationTokenCompose = (...tokens) => {
   }
 
   let requested = false
-  let cancelReason
-  const internalRegistration = register((reason) => {
+  let cancelError
+  const internalRegistration = register((parentCancelError) => {
     requested = true
-    cancelReason = reason
+    cancelError = parentCancelError
     internalRegistration.unregister()
   })
 
   const throwIfRequested = () => {
     if (requested) {
-      throw createCancelError(cancelReason)
+      throw cancelError
     }
   }
 
@@ -146,14 +144,4 @@ export const createCancellationToken = () => {
     cancellationRequested: false,
     throwIfRequested,
   }
-}
-
-export const cancellationTokenToPromise = (cancellationToken) => {
-  return new Promise((resolve, reject) => {
-    cancellationToken.throwIfRequested()
-    const rejectRegistration = cancellationToken.register((reason) => {
-      rejectRegistration.unregister()
-      reject(createCancelError(reason))
-    })
-  })
 }
