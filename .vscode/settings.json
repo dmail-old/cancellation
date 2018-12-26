@@ -1,6 +1,5 @@
 {
   "search.exclude": {
-    "browser.js": true,
-    "node.js": true
+    "dist/**": true
   }
 }

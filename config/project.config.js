@@ -1,9 +1,16 @@
-const { configToMetaMap } = require("@dmail/project-structure")
-const structureConfig = require("./structure.config.js")
+const path = require("path")
+const { patternGroupToMetaMap } = require("@dmail/project-structure")
+const eslintConfig = require("@dmail/project-eslint-config").config
+const prettierConfig = require("@dmail/project-prettier-config")
 const {
   pluginOptionMapToPluginMap,
   pluginMapToPluginsForPlatform,
 } = require("@dmail/project-structure-compile-babel")
+const structureConfig = require("./structure.config.js")
+
+const localRoot = path.resolve(__dirname, "../")
+
+const metaMap = patternGroupToMetaMap(structureConfig)
 
 const pluginMap = pluginOptionMapToPluginMap({
   "transform-modules-commonjs": {},
@@ -39,10 +46,10 @@ const pluginMap = pluginOptionMapToPluginMap({
 
 const plugins = pluginMapToPluginsForPlatform(pluginMap, "node", "8.0.0")
 
-const metaMap = configToMetaMap(structureConfig)
-
 module.exports = {
-  localRoot: __dirname,
+  localRoot,
+  prettier: prettierConfig,
+  eslint: eslintConfig,
   metaMap,
   pluginMap,
   plugins,
