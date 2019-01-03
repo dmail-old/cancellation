@@ -9,12 +9,20 @@ var _cancellation = require("./cancellation.js");
 
 var _memoizeOnce = require("./memoizeOnce.js");
 
-const createStoppableOperation = ({
-  cancellationToken = (0, _cancellation.createCancellationToken)(),
-  start,
-  stop
-}) => {
+function _objectWithoutProperties(source, excluded) { if (source == null) return {}; var target = _objectWithoutPropertiesLoose(source, excluded); var key, i; if (Object.getOwnPropertySymbols) { var sourceSymbolKeys = Object.getOwnPropertySymbols(source); for (i = 0; i < sourceSymbolKeys.length; i++) { key = sourceSymbolKeys[i]; if (excluded.indexOf(key) >= 0) continue; if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue; target[key] = source[key]; } } return target; }
+
+function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
+
+const createStoppableOperation = (_ref) => {
+  let {
+    cancellationToken = (0, _cancellation.createCancellationToken)(),
+    start,
+    stop
+  } = _ref,
+      rest = _objectWithoutProperties(_ref, ["cancellationToken", "start", "stop"]);
+
   if (typeof stop !== "function") throw new TypeError(`createStoppableOperation expect a stop function. got ${stop}`);
+  ensureExactParameters(rest);
   cancellationToken.throwIfRequested();
   const promise = start();
   const cancelPromise = new Promise((resolve, reject) => {
@@ -35,4 +43,9 @@ const createStoppableOperation = ({
 };
 
 exports.createStoppableOperation = createStoppableOperation;
+
+const ensureExactParameters = extraParameters => {
+  const extraParamNames = Object.keys(extraParameters);
+  if (extraParamNames.length) throw new Error(`createOperation expect only cancellationToken, start. Got ${extraParamNames}`);
+};
 //# sourceMappingURL=./createStoppableOperation.js.map

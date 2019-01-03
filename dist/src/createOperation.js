@@ -18,7 +18,7 @@ const createOperation = (_ref) => {
   } = _ref,
       rest = _objectWithoutProperties(_ref, ["cancellationToken", "start"]);
 
-  if (Object.keys(rest).length) throw new Error(`createOperation expect only cancellationToken, start. Got ${Object.keys(rest)}`);
+  ensureExactParameters(rest);
   cancellationToken.throwIfRequested();
   const promise = start();
   const cancelPromise = new Promise((resolve, reject) => {
@@ -33,4 +33,9 @@ const createOperation = (_ref) => {
 };
 
 exports.createOperation = createOperation;
+
+const ensureExactParameters = extraParameters => {
+  const extraParamNames = Object.keys(extraParameters);
+  if (extraParamNames.length) throw new Error(`createOperation expect only cancellationToken, start. Got ${extraParamNames}`);
+};
 //# sourceMappingURL=./createOperation.js.map

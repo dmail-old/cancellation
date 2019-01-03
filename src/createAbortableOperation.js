@@ -5,10 +5,11 @@ export const createAbortableOperation = ({
   cancellationToken = createCancellationToken(),
   start,
   abort,
+  ...rest
 }) => {
   if (typeof abort !== "function")
     throw new TypeError(`createAbortableOperation expect an abort function. got ${abort}`)
-
+  ensureExactParameters(rest)
   cancellationToken.throwIfRequested()
 
   const promise = start()
@@ -27,4 +28,10 @@ export const createAbortableOperation = ({
   operationPromise.abort = abortInternal
 
   return operationPromise
+}
+
+const ensureExactParameters = (extraParameters) => {
+  const extraParamNames = Object.keys(extraParameters)
+  if (extraParamNames.length)
+    throw new Error(`createOperation expect only cancellationToken, start. Got ${extraParamNames}`)
 }

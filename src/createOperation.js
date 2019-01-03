@@ -5,11 +5,7 @@ export const createOperation = ({
   start,
   ...rest
 }) => {
-  if (Object.keys(rest).length)
-    throw new Error(
-      `createOperation expect only cancellationToken, start. Got ${Object.keys(rest)}`,
-    )
-
+  ensureExactParameters(rest)
   cancellationToken.throwIfRequested()
 
   const promise = start()
@@ -23,4 +19,10 @@ export const createOperation = ({
   const operationPromise = Promise.race([promise, cancelPromise])
 
   return operationPromise
+}
+
+const ensureExactParameters = (extraParameters) => {
+  const extraParamNames = Object.keys(extraParameters)
+  if (extraParamNames.length)
+    throw new Error(`createOperation expect only cancellationToken, start. Got ${extraParamNames}`)
 }

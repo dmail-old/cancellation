@@ -5,10 +5,11 @@ export const createStoppableOperation = ({
   cancellationToken = createCancellationToken(),
   start,
   stop,
+  ...rest
 }) => {
   if (typeof stop !== "function")
     throw new TypeError(`createStoppableOperation expect a stop function. got ${stop}`)
-
+  ensureExactParameters(rest)
   cancellationToken.throwIfRequested()
 
   const promise = start()
@@ -29,4 +30,10 @@ export const createStoppableOperation = ({
   operationPromise.stop = stopInternal
 
   return operationPromise
+}
+
+const ensureExactParameters = (extraParameters) => {
+  const extraParamNames = Object.keys(extraParameters)
+  if (extraParamNames.length)
+    throw new Error(`createOperation expect only cancellationToken, start. Got ${extraParamNames}`)
 }
