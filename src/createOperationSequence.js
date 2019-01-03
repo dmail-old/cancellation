@@ -1,7 +1,7 @@
 import { createCancellationToken } from "./cancellation"
 import { createOperation } from "./createOperation.js"
 
-export const createOperationSequence = ({
+export const createOperationSequence = async ({
   cancellationToken = createCancellationToken(),
   array,
   start,

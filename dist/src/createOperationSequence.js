@@ -9,7 +9,7 @@ var _cancellation = require("./cancellation");
 
 var _createOperation = require("./createOperation.js");
 
-const createOperationSequence = ({
+const createOperationSequence = async ({
   cancellationToken = (0, _cancellation.createCancellationToken)(),
   array,
   start
