@@ -22,6 +22,7 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@dmail/assert": "github:dmail/assert",
+		"@dmail/helper": "github:dmail/helper",
 		"@dmail/project-structure": "github:dmail/project-structure",
 		"@dmail/project-structure-compile-babel": "github:dmail/project-structure-compile-babel",
 		"@dmail/project-eslint-config": "github:dmail/project-eslint-config",
@@ -30,6 +31,7 @@
 		"prettier": "1.15.3",
 		"eslint": "5.1.0",
 		"eslint-plugin-import": "2.6.0",
+		"@babel/core": "7.1.0",
 		"babel-eslint": "9.0.0",
 		"rimraf": "2.6.2",
 		"codecov": "2.3.0",

@@ -1,10 +1,11 @@
+const { transformAsync } = require("@babel/core")
 const {
   pluginOptionMapToPluginMap,
   pluginMapToPluginsForPlatform,
-  compileFile,
   fileSystemWriteCompileResult,
 } = require("@dmail/project-structure-compile-babel")
 const { patternGroupToMetaMap, forEachRessourceMatching } = require("@dmail/project-structure")
+const { fileRead } = require("@dmail/helper")
 const { localRoot } = require("./util.js")
 
 const metaMap = patternGroupToMetaMap({
@@ -53,13 +54,22 @@ const pluginMap = pluginOptionMapToPluginMap({
 
 const plugins = pluginMapToPluginsForPlatform(pluginMap, "node", "8.0.0")
 
+const outputFolder = `dist`
+
 forEachRessourceMatching({
   localRoot,
   metaMap,
   predicate: ({ compile }) => compile,
   callback: async (ressource) => {
-    const { code, map } = await compileFile(ressource, { localRoot, plugins })
-    const outputFolder = `dist`
+    const source = await fileRead(`${localRoot}/${ressource}`)
+
+    const { code, map } = await transformAsync(source, {
+      plugins,
+      filenameRelative: ressource,
+      filename: `${localRoot}/${ressource}`,
+      sourceMaps: true,
+      sourceFileName: ressource,
+    })
 
     await fileSystemWriteCompileResult(
       {
