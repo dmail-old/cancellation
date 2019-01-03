@@ -33,16 +33,28 @@ Object.defineProperty(exports, "cancellationTokenCompose", {
     return _cancellation.cancellationTokenCompose;
   }
 });
+Object.defineProperty(exports, "createAbortableOperation", {
+  enumerable: true,
+  get: function () {
+    return _createAbortableOperation.createAbortableOperation;
+  }
+});
+Object.defineProperty(exports, "createConcurrentOperations", {
+  enumerable: true,
+  get: function () {
+    return _createConcurrentOperations.createConcurrentOperations;
+  }
+});
 Object.defineProperty(exports, "createOperation", {
   enumerable: true,
   get: function () {
     return _createOperation.createOperation;
   }
 });
-Object.defineProperty(exports, "createAbortableOperation", {
+Object.defineProperty(exports, "createOperationSequence", {
   enumerable: true,
   get: function () {
-    return _createAbortableOperation.createAbortableOperation;
+    return _createOperationSequence.createOperationSequence;
   }
 });
 Object.defineProperty(exports, "createStoppableOperation", {
@@ -54,9 +66,13 @@ Object.defineProperty(exports, "createStoppableOperation", {
 
 var _cancellation = require("./src/cancellation.js");
 
+var _createAbortableOperation = require("./src/createAbortableOperation.js");
+
+var _createConcurrentOperations = require("./src/createConcurrentOperations.js");
+
 var _createOperation = require("./src/createOperation.js");
 
-var _createAbortableOperation = require("./src/createAbortableOperation.js");
+var _createOperationSequence = require("./src/createOperationSequence.js");
 
 var _createStoppableOperation = require("./src/createStoppableOperation.js");
 //# sourceMappingURL=./index.js.map

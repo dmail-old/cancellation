@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "sources": [
+    "../../src/createOperationSequence.js"
+  ],
+  "names": [
+    "createOperationSequence",
+    "cancellationToken",
+    "array",
+    "start",
+    "results",
+    "reduce",
+    "previous",
+    "value",
+    "result",
+    "push",
+    "Promise",
+    "resolve"
+  ],
+  "mappings": ";;;;;;;AAAA;;AACA;;AAEO,MAAMA,uBAAuB,GAAG,CAAC;AACtCC,EAAAA,iBAAiB,GAAG,4CADkB;AAEtCC,EAAAA,KAFsC;AAGtCC,EAAAA;AAHsC,CAAD,KAIjC;AACJ,QAAMC,OAAO,GAAG,EAAhB;AACA,QAAMF,KAAK,CAACG,MAAN,CAAa,CAACC,QAAD,EAAWC,KAAX,KAAqB;AACtC,WAAO,sCAAgB;AACrBN,MAAAA,iBADqB;AAErBE,MAAAA,KAAK,EAAE,YAAY;AACjB,cAAMG,QAAN;AACA,cAAME,MAAM,GAAG,MAAML,KAAK,CAACI,KAAD,CAA1B;AACAH,QAAAA,OAAO,CAACK,IAAR,CAAaD,MAAb;AACD;AANoB,KAAhB,CAAP;AAQD,GATK,EASHE,OAAO,CAACC,OAAR,EATG,CAAN;AAUA,SAAOP,OAAP;AACD,CAjBM"
+}
