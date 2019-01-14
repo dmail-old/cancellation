@@ -24,18 +24,20 @@ const createAbortableOperation = (_ref) => {
   if (typeof abort !== "function") throw new TypeError(`createAbortableOperation expect an abort function. got ${abort}`);
   ensureExactParameters(rest);
   cancellationToken.throwIfRequested();
-  const promise = start();
+  const promise = new Promise(resolve => {
+    resolve(start());
+  });
   const cancelPromise = new Promise((resolve, reject) => {
     const cancelRegistration = cancellationToken.register(cancelError => {
       cancelRegistration.unregister();
       reject(cancelError);
     });
-    promise.then(cancelRegistration.unregister);
+    promise.then(cancelRegistration.unregister, () => {});
   });
   const operationPromise = Promise.race([promise, cancelPromise]);
   const abortInternal = (0, _memoizeOnce.memoizeOnce)(abort);
   const abortRegistration = cancellationToken.register(abortInternal);
-  promise.then(abortRegistration.unregister);
+  promise.then(abortRegistration.unregister, () => {});
   operationPromise.abort = abortInternal;
   return operationPromise;
 };

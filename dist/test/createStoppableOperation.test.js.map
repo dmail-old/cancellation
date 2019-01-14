@@ -1,0 +1,15 @@
+{
+  "version": 3,
+  "sources": [
+    "../../test/createStoppableOperation.test.js"
+  ],
+  "names": [
+    "error",
+    "Error",
+    "message",
+    "expected",
+    "stop",
+    "start"
+  ],
+  "mappings": ";;AAAA;;AACA;;AAEA,MAAMA,KAAK,GAAG,IAAIC,KAAJ,CAAU,MAAV,CAAd;AACA,wEAAiC;AAC/BC,EAAAA,OAAO,EAAE,yBADsB;AAE/BC,EAAAA,QAAQ,EAAE,CAACH,KAAD;AAFqB,CAAjC;AAKA,qCAAyB;AACvBI,EAAAA,IAAI,EAAE,MAAM,CAAE,CADS;AAEvBC,EAAAA,KAAK,EAAE,MAAM;AACX,UAAML,KAAN;AACD;AAJsB,CAAzB"
+}

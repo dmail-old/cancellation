@@ -24,13 +24,15 @@ const createStoppableOperation = (_ref) => {
   if (typeof stop !== "function") throw new TypeError(`createStoppableOperation expect a stop function. got ${stop}`);
   ensureExactParameters(rest);
   cancellationToken.throwIfRequested();
-  const promise = start();
+  const promise = new Promise(resolve => {
+    resolve(start());
+  });
   const cancelPromise = new Promise((resolve, reject) => {
     const cancelRegistration = cancellationToken.register(cancelError => {
       cancelRegistration.unregister();
       reject(cancelError);
     });
-    promise.then(cancelRegistration.unregister);
+    promise.then(cancelRegistration.unregister, () => {});
   });
   const operationPromise = Promise.race([promise, cancelPromise]);
   const stopInternal = (0, _memoizeOnce.memoizeOnce)(async reason => {
