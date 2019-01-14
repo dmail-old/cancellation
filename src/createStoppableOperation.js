@@ -12,13 +12,15 @@ export const createStoppableOperation = ({
   ensureExactParameters(rest)
   cancellationToken.throwIfRequested()
 
-  const promise = start()
+  const promise = new Promise((resolve) => {
+    resolve(start())
+  })
   const cancelPromise = new Promise((resolve, reject) => {
     const cancelRegistration = cancellationToken.register((cancelError) => {
       cancelRegistration.unregister()
       reject(cancelError)
     })
-    promise.then(cancelRegistration.unregister)
+    promise.then(cancelRegistration.unregister, () => {})
   })
   const operationPromise = Promise.race([promise, cancelPromise])
 

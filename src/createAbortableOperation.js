@@ -12,19 +12,21 @@ export const createAbortableOperation = ({
   ensureExactParameters(rest)
   cancellationToken.throwIfRequested()
 
-  const promise = start()
+  const promise = new Promise((resolve) => {
+    resolve(start())
+  })
   const cancelPromise = new Promise((resolve, reject) => {
     const cancelRegistration = cancellationToken.register((cancelError) => {
       cancelRegistration.unregister()
       reject(cancelError)
     })
-    promise.then(cancelRegistration.unregister)
+    promise.then(cancelRegistration.unregister, () => {})
   })
   const operationPromise = Promise.race([promise, cancelPromise])
 
   const abortInternal = memoizeOnce(abort)
   const abortRegistration = cancellationToken.register(abortInternal)
-  promise.then(abortRegistration.unregister)
+  promise.then(abortRegistration.unregister, () => {})
   operationPromise.abort = abortInternal
 
   return operationPromise

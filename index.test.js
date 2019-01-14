@@ -4,3 +4,10 @@ import "./test/cancel-2.js"
 import "./test/cancel-3-delayed.js"
 import "./test/cancel-3.js"
 import "./test/cancel-4.js"
+import "./test/createOperation.test.js"
+// we cannot enable the two tests below because
+// every test does not have its own process, only one of
+// createOperation.test.js, createAbortableOperation.test.js, createStoppableOperation.test.js
+// can be enabled for now
+// import "./test/createAbortableOperation.test.js"
+// import "./test/createStoppableOperation.test.js"
