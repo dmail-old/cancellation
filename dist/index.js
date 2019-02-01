@@ -15,6 +15,12 @@ Object.defineProperty(exports, "isCancelError", {
     return _cancellation.isCancelError;
   }
 });
+Object.defineProperty(exports, "errorToCancelReason", {
+  enumerable: true,
+  get: function () {
+    return _cancellation.errorToCancelReason;
+  }
+});
 Object.defineProperty(exports, "createCancellationToken", {
   enumerable: true,
   get: function () {

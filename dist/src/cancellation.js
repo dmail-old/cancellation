@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.isCancelError = exports.createCancelError = void 0;
+exports.createCancellationToken = exports.cancellationTokenCompose = exports.createCancellationSource = exports.errorToCancelReason = exports.isCancelError = exports.createCancelError = void 0;
 
 var _arrayHelper = require("./arrayHelper.js");
 
@@ -22,6 +22,13 @@ const isCancelError = value => {
 };
 
 exports.isCancelError = isCancelError;
+
+const errorToCancelReason = error => {
+  if (!isCancelError(error)) return "";
+  return error.reason;
+};
+
+exports.errorToCancelReason = errorToCancelReason;
 
 const createCancellationSource = () => {
   let requested = false;

@@ -1,6 +1,7 @@
 export {
   createCancelError,
   isCancelError,
+  errorToCancelReason,
   createCancellationToken,
   createCancellationSource,
   cancellationTokenCompose,
