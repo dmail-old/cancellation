@@ -11,13 +11,7 @@ const test = async () => {
       const port = await portPromise
       const responsePromise = requestServer({ cancellationToken, port })
 
-      cancel("cancel").then((values) => {
-        assert({
-          actual: values,
-          expected: ["request aborted because cancel", "server closed because cancel"],
-        })
-        console.log("passed")
-      })
+      cancel("cancel")
 
       const response = await responsePromise
       assert({ actual: response.statusCode, expected: 200 })

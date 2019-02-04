@@ -18,13 +18,7 @@ const test = async () => {
         cancellationToken
       });
       const port = await portPromise;
-      cancel("cancel").then(values => {
-        (0, _assert.assert)({
-          actual: values,
-          expected: ["server closed because cancel"]
-        });
-        console.log("passed");
-      });
+      cancel("cancel");
       const responsePromise = (0, _fixtures.requestServer)({
         cancellationToken,
         port

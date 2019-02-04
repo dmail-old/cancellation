@@ -9,10 +9,7 @@ const test = async () => {
     try {
       const portPromise = startServer({ cancellationToken })
 
-      cancel("cancel").then((values) => {
-        assert({ actual: values, expected: ["server closed because cancel"] })
-        console.log("passed")
-      })
+      cancel("cancel")
 
       const port = await portPromise
       const responsePromise = requestServer({ cancellationToken, port })

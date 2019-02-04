@@ -12,10 +12,7 @@ var _index = require("../index.js");
   cancellationSource.cancel();
   (0, _assert.assert)({
     actual: compositeCancellationToken.cancellationRequested,
-    // we should expect true here
-    // but because cancel is async and awaits previous registration
-    // cancellation is not propaged sync
-    expected: false
+    expected: true
   });
 }
 //# sourceMappingURL=./cancellationRequested.test.js.map

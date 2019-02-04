@@ -14,13 +14,7 @@ const test = async () => {
     } = (0, _index.createCancellationSource)();
 
     try {
-      cancel("cancel").then(values => {
-        (0, _assert.assert)({
-          actual: values,
-          expected: []
-        });
-        console.log("passed");
-      });
+      cancel("cancel");
       const portPromise = (0, _fixtures.startServer)({
         cancellationToken
       });

@@ -33,33 +33,17 @@ exports.errorToCancelReason = errorToCancelReason;
 const createCancellationSource = () => {
   let requested = false;
   let cancelError;
-  let cancelPromise;
   let registrationArray = [];
 
   const cancel = reason => {
-    if (requested) return cancelPromise;
+    if (requested) return;
     requested = true;
     cancelError = createCancelError(reason);
-    const values = []; // we may want to remove this completely
-    // - it does not follow the spec
-    // - it-s utopic to believe we can cancellation tree with this
-    // - it prevent sync propagation of cancellation
-
-    cancelPromise = registrationArray.reduce(async (previous, registration) => {
-      await previous;
-      const returnValue = registration.callback(cancelError);
-      const value = await returnValue;
-      const removedBeforeResolved = registrationArray.indexOf(registration) === -1; // if the callback is removed it means
-      // what it does is not important
-
-      if (removedBeforeResolved === false) {
-        values.push(value);
-      }
-    }, Promise.resolve()).then(() => {
-      registrationArray.length = 0;
-      return values;
+    const registrationArrayCopy = registrationArray.slice();
+    registrationArray.length = 0;
+    registrationArrayCopy.forEach(registration => {
+      registration.callback(cancelError); // const removedDuringCall = registrationArray.indexOf(registration) === -1
     });
-    return cancelPromise;
   };
 
   const register = callback => {

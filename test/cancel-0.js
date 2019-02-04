@@ -7,10 +7,7 @@ const test = async () => {
     const { token: cancellationToken, cancel } = createCancellationSource()
 
     try {
-      cancel("cancel").then((values) => {
-        assert({ actual: values, expected: [] })
-        console.log("passed")
-      })
+      cancel("cancel")
 
       const portPromise = startServer({ cancellationToken })
       const port = await portPromise

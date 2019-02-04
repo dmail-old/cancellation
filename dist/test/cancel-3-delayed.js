@@ -24,13 +24,7 @@ const test = async () => {
       }); // setTimeout allow to trigger socket hangup error
 
       setTimeout(() => {
-        cancel("cancel").then(values => {
-          (0, _assert.assert)({
-            actual: values,
-            expected: ["request aborted because cancel", "server closed because cancel"]
-          });
-          console.log("passed");
-        });
+        cancel("cancel");
       }, 2);
       const response = await responsePromise;
       (0, _assert.assert)({
