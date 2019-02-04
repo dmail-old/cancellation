@@ -40,7 +40,11 @@ const createCancellationSource = () => {
     if (requested) return cancelPromise;
     requested = true;
     cancelError = createCancelError(reason);
-    const values = [];
+    const values = []; // we may want to remove this completely
+    // - it does not follow the spec
+    // - it-s utopic to believe we can cancellation tree with this
+    // - it prevent sync propagation of cancellation
+
     cancelPromise = registrationArray.reduce(async (previous, registration) => {
       await previous;
       const returnValue = registration.callback(cancelError);

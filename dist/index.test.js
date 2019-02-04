@@ -12,5 +12,7 @@ require("./test/cancel-3.js");
 
 require("./test/cancel-4.js");
 
+require("./test/cancellationRequested.test.js");
+
 require("./test/createOperation.test.js");
 //# sourceMappingURL=./index.test.js.map
