@@ -70,7 +70,7 @@ export const createCancellationSource = () => {
 
   const throwIfRequested = () => {
     if (requested) {
-      throw createCancelError(cancelError)
+      throw cancelError
     }
   }
 
