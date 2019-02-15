@@ -1,13 +1,17 @@
 import { createCancellationToken } from "./cancellation"
 import { createOperation } from "./createOperation.js"
 
-export const createConcurrentOperations = ({
+export const createConcurrentOperations = async ({
   cancellationToken = createCancellationToken(),
   maxParallelExecution = 5,
-  array = [],
+  array,
   start,
   ...rest
 }) => {
+  if (typeof maxParallelExecution !== "number")
+    throw new TypeError(`maxParallelExecution must be a number, got ${maxParallelExecution}`)
+  if (typeof array !== "object") throw new TypeError(`array must be an array, got ${array}`)
+  if (typeof start !== "function") throw new TypeError(`start must be a function, got ${start}`)
   if (Object.keys(rest).length) throw createExtraParameterError(rest)
 
   const results = []

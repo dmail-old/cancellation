@@ -13,15 +13,18 @@ function _objectWithoutProperties(source, excluded) { if (source == null) return
 
 function _objectWithoutPropertiesLoose(source, excluded) { if (source == null) return {}; var target = {}; var sourceKeys = Object.keys(source); var key, i; for (i = 0; i < sourceKeys.length; i++) { key = sourceKeys[i]; if (excluded.indexOf(key) >= 0) continue; target[key] = source[key]; } return target; }
 
-const createConcurrentOperations = (_ref) => {
+const createConcurrentOperations = async (_ref) => {
   let {
     cancellationToken = (0, _cancellation.createCancellationToken)(),
     maxParallelExecution = 5,
-    array = [],
+    array,
     start
   } = _ref,
       rest = _objectWithoutProperties(_ref, ["cancellationToken", "maxParallelExecution", "array", "start"]);
 
+  if (typeof maxParallelExecution !== "number") throw new TypeError(`maxParallelExecution must be a number, got ${maxParallelExecution}`);
+  if (typeof array !== "object") throw new TypeError(`array must be an array, got ${array}`);
+  if (typeof start !== "function") throw new TypeError(`start must be a function, got ${start}`);
   if (Object.keys(rest).length) throw createExtraParameterError(rest);
   const results = [];
   let progressionIndex = 0;
