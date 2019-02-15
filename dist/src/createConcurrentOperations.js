@@ -22,43 +22,39 @@ const createConcurrentOperations = (_ref) => {
   } = _ref,
       rest = _objectWithoutProperties(_ref, ["cancellationToken", "maxParallelExecution", "array", "start"]);
 
-  ensureExactParameters(rest);
-  cancellationToken.throwIfRequested();
+  if (Object.keys(rest).length) throw createExtraParameterError(rest);
   const results = [];
-  const firstChunk = array.slice(0, maxParallelExecution);
-  let globalIndex = maxParallelExecution - 1;
+  let progressionIndex = 0;
 
-  const execute = async (data, index) => {
+  const executeNext = async () => {
+    const index = progressionIndex;
+    progressionIndex++;
+    const data = array[index];
     return (0, _createOperation.createOperation)({
       cancellationToken,
       start: async () => {
         const value = await start(data);
         results[index] = value;
 
-        if (globalIndex < array.length - 1) {
-          globalIndex++;
-          return execute(array[globalIndex], globalIndex);
+        if (progressionIndex < array.length - 1) {
+          await executeNext();
         }
-
-        return undefined;
       }
     });
   };
 
-  return (0, _createOperation.createOperation)({
+  await (0, _createOperation.createOperation)({
     cancellationToken,
     start: async () => {
-      const promises = firstChunk.map((data, index) => execute(data, index));
-      await Promise.all(promises);
-      return results;
+      await Promise.all(array.slice(0, maxParallelExecution).map(() => executeNext()));
     }
   });
+  return results;
 };
 
 exports.createConcurrentOperations = createConcurrentOperations;
 
-const ensureExactParameters = extraParameters => {
-  const extraParamNames = Object.keys(extraParameters);
-  if (extraParamNames.length) throw new Error(`createConcurrentOperations expect only cancellationToken, maxParallelExecution, array, start. Got ${extraParamNames}`);
+const createExtraParameterError = extraParameter => {
+  return new Error(`only cancellationToken, maxParallelExecution, array, start expected. received ${Object.keys(extraParameter)}`);
 };
 //# sourceMappingURL=./createConcurrentOperations.js.map
