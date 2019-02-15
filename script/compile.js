@@ -4,11 +4,14 @@ const {
   pluginMapToPluginsForPlatform,
   fileSystemWriteCompileResult,
 } = require("@dmail/project-structure-compile-babel")
-const { patternGroupToMetaMap, forEachRessourceMatching } = require("@dmail/project-structure")
+const {
+  namedValueDescriptionToMetaDescription,
+  selectAllFileInsideFolder,
+} = require("@dmail/project-structure")
 const { fileRead } = require("@dmail/helper")
-const { localRoot } = require("./util.js")
+const { projectFolder } = require("./projectFolder.js")
 
-const metaMap = patternGroupToMetaMap({
+const metaDescription = namedValueDescriptionToMetaDescription({
   compile: {
     "**/*.js": true,
     node_modules: false, // eslint-disable-line camelcase
@@ -56,19 +59,20 @@ const plugins = pluginMapToPluginsForPlatform(pluginMap, "node", "8.0.0")
 
 const outputFolder = `dist`
 
-forEachRessourceMatching({
-  localRoot,
-  metaMap,
+selectAllFileInsideFolder({
+  pathname: projectFolder,
+  metaDescription,
   predicate: ({ compile }) => compile,
-  callback: async (ressource) => {
-    const source = await fileRead(`${localRoot}/${ressource}`)
+  transformFile: async ({ filenameRelative }) => {
+    const filename = `${projectFolder}/${filenameRelative}`
+    const source = await fileRead(filename)
 
     const { code, map } = await transformAsync(source, {
       plugins,
-      filenameRelative: ressource,
-      filename: `${localRoot}/${ressource}`,
+      filenameRelative,
+      filename,
       sourceMaps: true,
-      sourceFileName: ressource,
+      sourceFileName: filenameRelative,
     })
 
     await fileSystemWriteCompileResult(
@@ -77,12 +81,12 @@ forEachRessourceMatching({
         map,
       },
       {
-        localRoot,
-        outputFile: ressource,
+        localRoot: projectFolder,
+        outputFile: filenameRelative,
         outputFolder,
       },
     )
 
-    console.log(`${ressource} -> ${outputFolder}/${ressource}`)
+    console.log(`${filenameRelative} -> ${outputFolder}/${filenameRelative}`)
   },
 })
