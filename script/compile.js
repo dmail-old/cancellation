@@ -13,13 +13,12 @@ const { projectFolder } = require("./projectFolder.js")
 
 const metaDescription = namedValueDescriptionToMetaDescription({
   compile: {
-    "**/*.js": true,
-    node_modules: false, // eslint-disable-line camelcase
-    dist: false,
-    script: false,
-    config: false,
-    ".eslintrc.js": false,
-    "prettier.config.js": false,
+    "/**/*.js": true,
+    "/node_modules/": false, // eslint-disable-line camelcase
+    "/dist/": false,
+    "/script/": false,
+    "/.eslintrc.js": false,
+    "/prettier.config.js": false,
   },
 })
 
