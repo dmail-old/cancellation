@@ -6,7 +6,7 @@ const {
 const { projectFolder } = require("./projectFolder.js")
 
 const metaDescription = namedValueDescriptionToMetaDescription({
-  format: {
+  formattable: {
     "/**/*.js": true,
     "/**/*.json": true,
     "/**/*.md": true,
@@ -20,7 +20,7 @@ const metaDescription = namedValueDescriptionToMetaDescription({
 selectAllFileInsideFolder({
   pathname: projectFolder,
   metaDescription,
-  predicate: (meta) => meta.format === true,
+  predicate: (meta) => meta.formattable === true,
   transformFile: ({ filenameRelative }) => filenameRelative,
 }).then((filenameRelativeArray) => {
   prettiest({ folder: projectFolder, filenameRelativeArray })

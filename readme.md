@@ -1,6 +1,6 @@
 # cancellation
 
-[![npm](https://badge.fury.io/js/%40dmail%2Fcancellation.svg)](https://badge.fury.io/js/%40dmail%2Fcancellation)
+[![npm package](https://img.shields.io/npm/v/@dmail/cancellation.svg)](https://www.npmjs.com/package/@dmail/cancellation)
 [![build](https://travis-ci.com/dmail/cancellation.svg?branch=master)](http://travis-ci.com/dmail/cancellation)
 [![codecov](https://codecov.io/gh/dmail/cancellation/branch/master/graph/badge.svg)](https://codecov.io/gh/dmail/cancellation)
 
