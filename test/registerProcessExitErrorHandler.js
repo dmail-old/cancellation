@@ -1,7 +1,6 @@
-import { assert } from "@dmail/assert"
 import { arrayWithout } from "@dmail/helper"
 
-export const expectProcessUnhandledRejections = ({ message, expected }) => {
+export const registerProcessExitErrorHandler = (callback) => {
   let unhandledRejections = []
 
   process.on("unhandledRejection", (error, promise) => {
@@ -16,12 +15,7 @@ export const expectProcessUnhandledRejections = ({ message, expected }) => {
 
   process.on("exit", () => {
     if (process.exitCode === 0 || process.exitCode === undefined) {
-      const actual = unhandledRejections.map(({ error }) => error)
-      assert({
-        message,
-        actual,
-        expected,
-      })
+      callback({ unhandledRejectionArray: unhandledRejections.map(({ error }) => error) })
     }
   })
 }

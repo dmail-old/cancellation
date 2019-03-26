@@ -1,10 +1,10 @@
+import { assert } from "@dmail/assert"
 import { createAbortableOperation } from "../index.js"
-import { expectProcessUnhandledRejections } from "./expectProcessUnhandledRejections.js"
+import { registerProcessExitErrorHandler } from "./registerProcessExitErrorHandler.js"
 
 const error = new Error("here")
-expectProcessUnhandledRejections({
-  message: "one unhandled rejection",
-  expected: [error],
+registerProcessExitErrorHandler(({ errorArray }) => {
+  assert({ actual: errorArray, expected: [error] })
 })
 
 createAbortableOperation({

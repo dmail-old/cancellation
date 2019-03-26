@@ -26,7 +26,7 @@ export const createConcurrentOperations = async ({
       start: async () => {
         const value = await start(data)
         results[index] = value
-        if (progressionIndex < array.length - 1) {
+        if (progressionIndex < array.length) {
           await executeNext()
         }
       },
