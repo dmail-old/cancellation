@@ -9,8 +9,7 @@ registerProcessExitErrorHandler(({ unhandledRejectionArray }) => {
   assert({ actual: unhandledRejectionArray, expected: [error] })
   assert({
     actual: startedCount,
-    // 4 because 'a' had time to start 'c' which had time to start 'd'
-    expected: 4,
+    expected: 2,
   })
 })
 
