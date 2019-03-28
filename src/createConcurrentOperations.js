@@ -21,7 +21,7 @@ so it means [a,b] and then [c,d] that will wait for a and b to complete
 
 */
 
-import { createCancellationToken } from "./cancellation"
+import { createCancellationToken } from "./cancellation.js"
 import { createOperation } from "./createOperation.js"
 
 export const createConcurrentOperations = async ({
@@ -33,6 +33,8 @@ export const createConcurrentOperations = async ({
 }) => {
   if (typeof maxParallelExecution !== "number")
     throw new TypeError(`maxParallelExecution must be a number, got ${maxParallelExecution}`)
+  if (maxParallelExecution < 1)
+    throw new Error(`maxParallelExecution must be 1 or more, got ${maxParallelExecution}`)
   if (typeof array !== "object") throw new TypeError(`array must be an array, got ${array}`)
   if (typeof start !== "function") throw new TypeError(`start must be a function, got ${start}`)
   if (Object.keys(rest).length) throw createExtraParameterError(rest)

@@ -1,5 +1,5 @@
-import { assert } from "@dmail/assert"
-import { createConcurrentOperations } from "../../index.js"
+import { assert } from "/node_modules/@dmail/assert/index.js"
+import { createConcurrentOperations } from "../../../index.js"
 import { registerProcessExitErrorHandler } from "../registerProcessExitErrorHandler.js"
 
 const error = new Error("here")
