@@ -1,9 +1,13 @@
 const {
   babelPluginDescription,
 } = require("./node_modules/@jsenv/babel-plugin-description/index.js")
-const importMap = require('./importMap.json')
 
-exports.importMap = importMap
+try {
+  const importMap = require("./importMap.json")
+  exports.importMap = importMap
+} catch (e) {
+  exports.importMap = {}
+}
 
 const projectFolder = __dirname
 exports.projectFolder = projectFolder
