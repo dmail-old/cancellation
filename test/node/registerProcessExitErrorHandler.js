@@ -1,4 +1,4 @@
-import { arrayWithout } from "@dmail/helper"
+import { arrayWithout } from "../../src/arrayHelper.js"
 
 export const registerProcessExitErrorHandler = (callback) => {
   let unhandledRejections = []
