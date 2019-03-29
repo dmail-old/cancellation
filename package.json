@@ -1,6 +1,6 @@
 {
 	"name": "@dmail/cancellation",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
@@ -9,8 +9,9 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"main": "dist/node/index.js",
 	"module": "index.js",
+	"browser": "dist/browser/main.js",
+	"main": "dist/node/main.js",
 	"files": [
 		"/index.js",
 		"/src/",
