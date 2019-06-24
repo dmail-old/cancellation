@@ -6,14 +6,12 @@
 
 > Cancel asynchronous operations, compatible with await
 
-## Installing
+## Installation
 
-Not supported: Made only for my usage for now.
+```
+npm i @dmail/cancellation
+```
 
 ## Example
 
 — see [test/](./test) for concrete examples
-
-## Licensing
-
-MIT

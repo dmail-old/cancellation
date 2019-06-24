@@ -1,20 +1,28 @@
-const {
-  babelPluginDescription,
-} = require("./node_modules/@jsenv/babel-plugin-description/index.js")
+const { launchNode, launchChromium } = require("@jsenv/core")
 
-try {
-  const importMap = require("./importMap.json")
-  exports.importMap = importMap
-} catch (e) {
-  exports.importMap = {}
+const projectPath = __dirname
+exports.projectPath = projectPath
+
+const testDescription = {
+  "/test/**/*.test.js": {
+    browser: {
+      launch: launchChromium,
+    },
+    node: {
+      launch: launchNode,
+    },
+  },
+  "/test/browser/**/*.test.js": {
+    browser: {
+      launch: launchChromium,
+    },
+    node: null,
+  },
+  "/test/node/**/*.test.js": {
+    browser: null,
+    node: {
+      launch: launchNode,
+    },
+  },
 }
-
-const projectFolder = __dirname
-exports.projectFolder = projectFolder
-
-const compileInto = ".dist"
-exports.compileInto = compileInto
-
-exports.babelPluginDescription = babelPluginDescription
-
-// could add nodeUsageMap and browserUsageMap
+exports.testDescription = testDescription

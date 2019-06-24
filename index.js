@@ -12,3 +12,8 @@ export { createConcurrentOperations } from "./src/createConcurrentOperations.js"
 export { createOperation } from "./src/createOperation.js"
 export { createOperationSequence } from "./src/createOperationSequence.js"
 export { createStoppableOperation } from "./src/createStoppableOperation.js"
+
+export {
+  catchAsyncFunctionCancellation,
+  createProcessInterruptionCancellationToken,
+} from "./src/extra.js"
