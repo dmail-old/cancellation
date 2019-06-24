@@ -1,9 +1,9 @@
 import { assert } from "/node_modules/@dmail/assert/index.js"
 import { createConcurrentOperations } from "../../../index.js"
-import { registerProcessExitErrorHandler } from "../registerProcessExitErrorHandler.js"
+import { registerProcessExitCallback } from "../registerProcessExitCallback.js"
 
-registerProcessExitErrorHandler(({ unhandledRejectionArray }) => {
-  assert({ actual: unhandledRejectionArray, expected: [] })
+registerProcessExitCallback(({ exceptionArray }) => {
+  assert({ actual: exceptionArray, expected: [] })
 })
 
 const resultArray = await createConcurrentOperations({

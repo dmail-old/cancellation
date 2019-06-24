@@ -1,16 +1,17 @@
 import { assert } from "/node_modules/@dmail/assert/index.js"
 import { createConcurrentOperations } from "../../../index.js"
-import { registerProcessExitErrorHandler } from "../registerProcessExitErrorHandler.js"
+import { registerProcessExitCallback } from "../registerProcessExitCallback.js"
 
 const error = new Error("here")
 let startedCount = 0
 
-registerProcessExitErrorHandler(({ unhandledRejectionArray }) => {
-  assert({ actual: unhandledRejectionArray, expected: [error] })
+registerProcessExitCallback(({ exceptionArray }) => {
   assert({
     actual: startedCount,
     expected: 2,
   })
+  assert({ actual: exceptionArray, expected: [{ exception: error, origin: "uncaughtException" }] })
+  process.exitCode = 0
 })
 
 createConcurrentOperations({
