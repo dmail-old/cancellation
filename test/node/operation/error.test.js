@@ -1,6 +1,6 @@
-import { assert } from "/node_modules/@dmail/assert/index.js"
-import { createOperation } from "../../index.js"
-import { registerProcessExitCallback } from "./registerProcessExitCallback.js"
+import { assert } from "@dmail/assert"
+import { createOperation } from "../../../index.js"
+import { registerProcessExitCallback } from "../registerProcessExitCallback.js"
 
 const error = new Error("here")
 registerProcessExitCallback(({ exceptionArray }) => {
