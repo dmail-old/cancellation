@@ -1,7 +1,7 @@
-const { test } = require("@jsenv/testing")
+const { startContinuousTesting } = require("@jsenv/testing")
 const { projectPath, testDescription } = require("../../jsenv.config.js")
 
-test({
+startContinuousTesting({
   projectPath,
   executeDescription: testDescription,
 })

@@ -1,7 +1,7 @@
-const { startBrowserExplorerServer } = require("@jsenv/core")
+const { startExploringServer } = require("@jsenv/exploring-server")
 const { projectPath } = require("../../jsenv.config.js")
 
-startBrowserExplorerServer({
+startExploringServer({
   projectPath,
   port: 3456,
   forcePort: true,
