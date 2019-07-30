@@ -35,6 +35,10 @@ export const createCancellationSource = () => {
   }
 
   const register = (callback) => {
+    if (typeof callback !== "function") {
+      throw new Error(`callback must be a function, got ${callback}`)
+    }
+
     const existingRegistration = registrationArray.find((registration) => {
       return registration.callback === callback
     })
@@ -74,6 +78,10 @@ export const createCancellationSource = () => {
 
 export const cancellationTokenCompose = (...tokens) => {
   const register = (callback) => {
+    if (typeof callback !== "function") {
+      throw new Error(`callback must be a function, got ${callback}`)
+    }
+
     const registrationArray = []
 
     const visit = (i) => {
@@ -122,6 +130,10 @@ export const cancellationTokenCompose = (...tokens) => {
 
 export const createCancellationToken = () => {
   const register = (callback) => {
+    if (typeof callback !== "function") {
+      throw new Error(`callback must be a function, got ${callback}`)
+    }
+
     return {
       callback,
       unregister: () => {},
